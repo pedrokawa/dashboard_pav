@@ -5,6 +5,7 @@ import Logo from '../assets/logo-asfaltopav.webp';
 import { api } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/UseAuth"
+import toast from "react-hot-toast";
 
 export const Login = () => {
   const [username, setUsername] = useState("");
@@ -17,18 +18,20 @@ export const Login = () => {
     e.preventDefault();
     
     if(!username || !password) {
-      alert("Preencha ambos os campos para continuar.");
+      toast.error("Preencha ambos os campos para continuar.");
       return;
     } 
+
+    const toastId = toast.loading("Verificando credenciais...");
 
     try {
       await api.login(username, password);
       login(username); 
-      alert("Login bem-sucedido! Redirecionando...");
+      toast.success("Login bem-sucedido! Redirecionando...", { id: toastId });
       
       navigate("/dashboard");
     } catch (error) {
-      alert("Erro ao tentar logar: " + error);
+      toast.error("Usuário ou senha inválidos.", { id: toastId });
       console.error("Erro detalhado:", error);
     }
   };
@@ -56,8 +59,9 @@ export const Login = () => {
           backgroundColor: '#ffffff',
           borderRadius: '1rem', // Bordas mais arredondadas
           boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)', // Sombra mais difusa e moderna
-          margin: '1rem' // Margem de segurança para telas pequenas
+          margin: '1rem'
         }}
+        noValidate
       >
         <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
           <img 
