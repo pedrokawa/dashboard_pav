@@ -1,9 +1,14 @@
 import { useAuth } from '../hooks/UseAuth';
 import { useState } from 'react';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import Logo from '../assets/logo-nobg.webp';
 
 export const Dashboard = () => {
   const { logout, username } = useAuth();
+
+  const navigate = useNavigate();
+
+  const location = useLocation();
 
   const initial = username ? username.charAt(0).toUpperCase() : 'V';
 
@@ -47,42 +52,56 @@ return (
         <nav style={{ flex: 1, padding: '1.5rem 1rem' }}>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             {/* Item ativo (destacado) */}
-            <li style={{ padding: '0.75rem 1rem', backgroundColor: '#e67e22', borderRadius: '0.5rem', cursor: 'pointer', fontWeight: '500' }}>
+            <li 
+            onClick={() => navigate('/dashboard')}
+            style={{
+              padding: '0.75rem 1rem', 
+              backgroundColor: location.pathname === '/dashboard' ? '#e67e22' : 'transparent', // Destaca o item ativo
+              borderRadius: '0.5rem', 
+              cursor: 'pointer', 
+              fontWeight: location.pathname === '/dashboard' ? '500' : 'normal', // Deixa o item ativo mais negrito
+              color: location.pathname === '/dashboard' ? '#000000' : '#9CA3AF', // Destaca o item ativo
+              }}
+              onMouseOver={(e) => { if(location.pathname !== '/dashboard') e.currentTarget.style.color='#000000';}}
+              onMouseOut={(e) => { if(location.pathname !== '/dashboard') e.currentTarget.style.color='#9CA3AF';}}
+              >
               📊 Visão Geral
             </li>
             {/* Itens inativos */}
-            <li style={{ padding: '0.75rem 1rem', borderRadius: '0.5rem', cursor: 'pointer', color: '#9CA3AF' }}>
+            <li 
+              onClick={() => navigate('/dashboard/relatorios')}
+              style={{ 
+              padding: '0.75rem 1rem', 
+              borderRadius: '0.5rem', 
+              cursor: 'pointer', 
+              color: location.pathname === '/dashboard/relatorios' ? '#000000' : '#9CA3AF', 
+              backgroundColor: location.pathname === '/dashboard/relatorios' ? '#e67e22' : 'transparent', 
+              fontWeight: location.pathname === '/dashboard/relatorios' ? '500' : 'normal',
+             }}
+             onMouseOver={(e) => { if(location.pathname !== '/dashboard/relatorios') e.currentTarget.style.color='#000000';}}
+             onMouseOut={(e) => { if(location.pathname !== '/dashboard/relatorios') e.currentTarget.style.color='#9CA3AF';
+
+            }}
+            >
               📋 Relatórios
             </li>
-            <li style={{ padding: '0.75rem 1rem', borderRadius: '0.5rem', cursor: 'pointer', color: '#9CA3AF' }}>
+            <li
+            onClick={() => navigate('/dashboard/configuracoes')} 
+            style={{ 
+            padding: '0.75rem 1rem', 
+            borderRadius: '0.5rem', 
+            cursor: 'pointer', 
+            color: location.pathname === '/dashboard/configuracoes' ? '#000000' : '#9CA3AF', 
+            backgroundColor: location.pathname === '/dashboard/configuracoes' ? '#e67e22' : 'transparent', 
+            fontWeight: location.pathname === '/dashboard/configuracoes' ? '500' : 'normal',
+            }}
+            onMouseOver={(e) => { if(location.pathname !== '/dashboard/configuracoes') e.currentTarget.style.color='#000000';}}
+            onMouseOut={(e) => { if(location.pathname !== '/dashboard/configuracoes') e.currentTarget.style.color='#9CA3AF';}}
+            >
               ⚙️ Configurações
             </li>
           </ul>
         </nav>
-
-        {/* Rodapé da Sidebar (Logout) */}
-        {/* <div style={{ padding: '1rem'
-          // , borderTop: '1px solid #374151' 
-          }}>
-          <button 
-            onClick={logout} 
-            style={{ 
-            width: '100%',
-            marginTop: '0.5rem',
-            padding: '0.875rem', 
-            backgroundColor: '#e67e22', // Botão escuro, bem elegante
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '0.5rem',
-            fontSize: '1rem',
-            fontWeight: '600',
-            cursor: 'pointer',
-            transition: 'background-color 0.2s'
-            }}
-          >
-            Sair do Sistema
-          </button>
-        </div> */}
       </aside>
 
       {/* ================= ÁREA PRINCIPAL ================= */}
@@ -169,8 +188,6 @@ return (
                     fontWeight: '500',
                     transition: 'background-color 0.2s'
                   }}
-                  // onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#FEE2E2'} // Vermelho bem clarinho no hover
-                  // onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
                   Acessos e permissões
                 </button>
@@ -187,8 +204,6 @@ return (
                     fontWeight: '500',
                     transition: 'background-color 0.2s'
                   }}
-                  // onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#FEE2E2'} // Vermelho bem clarinho no hover
-                  // onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
                   Perfil
                 </button>
@@ -218,30 +233,8 @@ return (
 
         {/* CONTEÚDO DA PÁGINA */}
         <div style={{ flex: 1, padding: '2rem', overflowY: 'auto' }}>
-          <h1 style={{ margin: '0 0 1.5rem 0', color: '#111827', fontSize: '1.8rem' }}>
-            Visão Geral
-          </h1>
-          
-          {/* Exemplo de Cards de Informação */}
-          <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
-            
-            <div style={{ flex: '1 1 250px', backgroundColor: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-               <h3 style={{ margin: 0, color: '#6B7280', fontSize: '0.9rem' }}>Acessos Hoje</h3>
-               <p style={{ margin: '0.5rem 0 0 0', fontSize: '1.8rem', fontWeight: 'bold', color: '#111827' }}>14</p>
-            </div>
-
-            <div style={{ flex: '1 1 250px', backgroundColor: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-               <h3 style={{ margin: 0, color: '#6B7280', fontSize: '0.9rem' }}>Status do Sistema</h3>
-               <p style={{ margin: '0.5rem 0 0 0', fontSize: '1.8rem', fontWeight: 'bold', color: '#10B981' }}>Online</p>
-            </div>
-
-            <div style={{ flex: '1 1 250px', backgroundColor: 'white', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-               <h3 style={{ margin: 0, color: '#6B7280', fontSize: '0.9rem' }}>Última Sincronização</h3>
-               <p style={{ margin: '0.5rem 0 0 0', fontSize: '1.8rem', fontWeight: 'bold', color: '#3B82F6' }}>10 min atrás</p>
-            </div>
-
-          </div>
-        </div>
+            <Outlet />
+        </div>  
 
       </main>
     </div>

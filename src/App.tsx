@@ -4,6 +4,9 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { Dashboard } from './pages/Dashboard';
 import { Login } from './pages/Login'
 import { Toaster } from 'react-hot-toast';
+import { VisaoGeral } from './pages/Gerencial';
+import { Relatorios } from './pages/Relatorios';
+import { Config } from './pages/Config';
 
 function App() {
   return (
@@ -14,7 +17,11 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />}>
+            <Route index element={<VisaoGeral />} />
+            <Route path="relatorios" element={<Relatorios />} />
+            <Route path="configuracoes" element={<Config />} />
+          </Route>
           </Route>
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
