@@ -4,7 +4,7 @@ import Logo from '../assets/logo-asfaltopav.webp';
 
 import { api } from "../api/api";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/UseAuth"
+import { useAuth } from "../hooks/UseAuth"
 
 export const Login = () => {
   const [username, setUsername] = useState("");
@@ -23,31 +23,15 @@ export const Login = () => {
 
     try {
       await api.login(username, password);
+      login(username); 
       alert("Login bem-sucedido! Redirecionando...");
-      login();
-
+      
       navigate("/dashboard");
     } catch (error) {
       alert("Erro ao tentar logar: " + error);
       console.error("Erro detalhado:", error);
     }
   };
-
-  // const validatePass = async () => {
-  //   if(!username || !password) {
-  //     alert("Preencha ambos os campos para continuar.");
-  //     return;
-  //   }
-    
-  //   try {
-  //     await api.login(username, password);
-  //     alert("Login bem-sucedido! Redirecionando...");
-  //     // Aqui você pode redirecionar para a página principal do dashboard, por exemplo:
-  //     // window.location.href = "/dashboard";
-  //   }catch (error) {
-  //     alert("Erro ao tentar logar: " + error);
-  //   }
-  // }
 
     return (
     <div className="animated-bg" style={{
