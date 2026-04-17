@@ -4,6 +4,7 @@ import { api } from "../api/api";
 import { DataTable, type ColumnConfig } from "../components/DataTable";
 import { dateFormat } from '../utils/dateFormat';
 import { Loading } from "../components/Loading";
+import { ExportButton } from "../components/ExportButton";
 
 interface Abastecimento {
     id: number;
@@ -89,6 +90,13 @@ return (
         <h1 style={{ margin: 0, color: 'var(--texto-escuro)', fontSize: '1.8rem' }}>
           Controle de Abastecimentos
         </h1>
+
+        <ExportButton
+        disabled={isLoading}
+        onClick={() => {
+          console.log('Clicado');
+        }} />
+        
       </div>
 
       {isLoading ? (

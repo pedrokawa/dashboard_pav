@@ -213,7 +213,7 @@ export const Dashboard = () => {
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
               style={{ 
                 width: '2.5rem', height: '2.5rem', 
-                backgroundColor: '#4F46E5', color: 'white', 
+                backgroundColor: '#e67e22', color: 'white', 
                 borderRadius: '50%', display: 'flex', alignItems: 'center', 
                 justifyContent: 'center', fontWeight: 'bold', fontSize: '1.2rem',
                 cursor: 'pointer'

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { api } from "../api/api";
 import { Loading } from "../components/Loading";
+import { ExportButton } from "../components/ExportButton";
 
 interface Veiculo {
     id: number;
@@ -39,20 +40,21 @@ export const RelVeiculos = () => {
     }, []);
 
     const colunas: ColumnConfig<Veiculo>[] = [
-        { key: 'codigoFrota', label: 'Cód. Frota' },
-        { key: 'placa', label: 'Placa', align: 'center' },
+        { key: 'codigoFrota', label: 'Cód. Frota', align: 'left' },
+        { key: 'placa', label: 'Placa', align: 'left' },
         { 
         key: 'modelo', 
-        label: 'Veículo', 
+        label: 'Marca/Modelo',
+        align: 'left', 
         // Um truque legal: juntar Marca e Modelo na mesma coluna para ficar mais limpo!
         render: (row) => `${row.marca} ${row.modelo}` 
         },
-        { key: 'anoModelo', label: 'Ano', align: 'center' },
-        { key: 'combustivel', label: 'Combustível', align: 'center' },
+        { key: 'anoModelo', label: 'Ano', align: 'left' },
+        { key: 'combustivel', label: 'Combustível', align: 'left' },
         { 
         key: 'status', 
         label: 'Status', 
-        align: 'center',
+        align: 'left',
         render: (row) => (
             <span style={{
             padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.85rem', fontWeight: '500',
@@ -68,9 +70,17 @@ export const RelVeiculos = () => {
   return (
     <>
     <div style={{ maxWidth: '100%'}}>
-        <h1 style={{ margin: '0 0 1.5rem 0', color: 'var(--texto-escuro)', fontSize: '1.8rem' }}>
-          Frota e Equipamentos
-        </h1>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <h1 style={{ margin: 0, color: 'var(--texto-escuro)', fontSize: '1.8rem' }}>
+            Frota e Equipamentos
+            </h1>
+
+            <ExportButton
+                disabled={isLoading}
+                onClick={() => {
+                console.log('Clicado');
+            }} />
+        </div>
     
     {isLoading ? (
         <Loading text="Buscando veículos..." />

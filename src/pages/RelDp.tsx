@@ -4,6 +4,7 @@ import { api } from "../api/api";
 import { DataTable, type ColumnConfig } from "../components/DataTable";
 import { dateFormat } from "../utils/dateFormat";
 import { Loading } from "../components/Loading";
+import { ExportButton } from "../components/ExportButton";
 
 interface Dp {
     id: number;
@@ -50,7 +51,14 @@ export const RelDp = () => {
         <h1 style={{ margin: 0, color: 'var(--texto-escuro)', fontSize: '1.8rem' }}>
            Departamento Pessoal
         </h1>
-      </div>    
+
+        <ExportButton
+            disabled={isLoading}
+            onClick={() => {
+            console.log('Clicado');
+        }} />
+        
+    </div>    
     { isLoading ? (
         <Loading text="Buscando colaboradores..." />
     ) : (
