@@ -16,7 +16,9 @@ export const Dashboard = () => {
 
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-return (
+  const [isRelatorioOpen, setIsRelatorioOpen] = useState(false);
+
+  return (
     <div style={{ 
       display: 'flex', 
       height: '100vh', 
@@ -68,23 +70,84 @@ return (
               📊 Visão Geral
             </li>
             {/* Itens inativos */}
+            {/* BOTÃO PAI */}
             <li 
-              onClick={() => navigate('/dashboard/relatorios')}
+              onClick={() => { 
+                setIsRelatorioOpen(!isRelatorioOpen);
+                if (!isRelatorioOpen){
+                  navigate('/dashboard/relatorios/veiculos'); // Navega para o primeiro relatório ao abrir
+                }
+              }} 
               style={{ 
-              padding: '0.75rem 1rem', 
-              borderRadius: '0.5rem', 
-              cursor: 'pointer', 
-              color: location.pathname === '/dashboard/relatorios' ? '#000000' : '#9CA3AF', 
-              backgroundColor: location.pathname === '/dashboard/relatorios' ? '#e67e22' : 'transparent', 
-              fontWeight: location.pathname === '/dashboard/relatorios' ? '500' : 'normal',
-             }}
-             onMouseOver={(e) => { if(location.pathname !== '/dashboard/relatorios') e.currentTarget.style.color='#000000';}}
-             onMouseOut={(e) => { if(location.pathname !== '/dashboard/relatorios') e.currentTarget.style.color='#9CA3AF';
-
-            }}
+                padding: '0.75rem 1rem', 
+                borderRadius: '0.5rem', 
+                cursor: 'pointer', 
+                transition: 'all 0.2s',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                backgroundColor: location.pathname.includes('/dashboard/relatorios') ? '#e67e22' : 'transparent',
+                color: location.pathname.includes('/dashboard/relatorios') ? 'var(--texto-claro)' : 'var(--texto-mutado)',
+                fontWeight: location.pathname.includes('/dashboard/relatorios') ? '500' : 'normal'
+              }}
+              onMouseOver={(e) => { if(!location.pathname.includes('/dashboard/relatorios')) e.currentTarget.style.color = '#e67e22'; }}
+              onMouseOut={(e) => { if(!location.pathname.includes('/dashboard/relatorios')) e.currentTarget.style.color = '#e67e22'; }}
             >
-              📋 Relatórios
+              <span>📋 Relatórios</span>
+              {/* Seta que gira quando abre/fecha */}
+              <span style={{ fontSize: '0.8rem', transform: isRelatorioOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }}>
+                ▼
+              </span>
             </li>
+            {isRelatorioOpen && (
+              <ul style={{ 
+                listStyle: 'none', 
+                padding: '0 0 0 1.5rem', // Dá aquele recuo para a direita
+                margin: '0.5rem 0', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: '0.25rem' 
+              }}>
+                <li 
+                  onClick={() => navigate('/dashboard/relatorios/veiculos')}
+                  style={{ 
+                    padding: '0.5rem 1rem', borderRadius: '0.5rem', cursor: 'pointer', fontSize: '0.9rem',
+                    backgroundColor: location.pathname === '/dashboard/relatorios/veiculos' ? 'rgba(255,255,255,0.1)' : 'transparent',
+                    color: location.pathname === '/dashboard/relatorios/veiculos' ? 'var(--texto-claro)' : 'var(--texto-mutado)'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = 'var(--texto-claro)'}
+                  onMouseOut={(e) => { if(location.pathname !== '/dashboard/relatorios/veiculos') e.currentTarget.style.color = 'var(--texto-mutado)'; }}
+                >
+                  🚜 Veículos
+                </li>
+                
+                <li 
+                  // onClick={() => navigate('/dashboard/relatorios/abastecimentos')}
+                  style={{ 
+                    padding: '0.5rem 1rem', borderRadius: '0.5rem', cursor: 'pointer', fontSize: '0.9rem',
+                    backgroundColor: location.pathname === '/dashboard/relatorios/abastecimentos' ? 'rgba(255,255,255,0.1)' : 'transparent',
+                    color: location.pathname === '/dashboard/relatorios/abastecimentos' ? 'var(--texto-claro)' : 'var(--texto-mutado)'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = 'var(--texto-claro)'}
+                  onMouseOut={(e) => { if(location.pathname !== '/dashboard/relatorios/abastecimentos') e.currentTarget.style.color = 'var(--texto-mutado)'; }}
+                >
+                  ⛽ Abastecimentos
+                </li>
+
+                <li 
+                  // onClick={() => navigate('/dashboard/relatorios/dp')}
+                  style={{ 
+                    padding: '0.5rem 1rem', borderRadius: '0.5rem', cursor: 'pointer', fontSize: '0.9rem',
+                    backgroundColor: location.pathname === '/dashboard/relatorios/dp' ? 'rgba(255,255,255,0.1)' : 'transparent',
+                    color: location.pathname === '/dashboard/relatorios/dp' ? 'var(--texto-claro)' : 'var(--texto-mutado)'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.color = 'var(--texto-claro)'}
+                  onMouseOut={(e) => { if(location.pathname !== '/dashboard/relatorios/dp') e.currentTarget.style.color = 'var(--texto-mutado)'; }}
+                >
+                  👷 Depto. Pessoal
+                </li>
+              </ul>
+            )}
             <li
             onClick={() => navigate('/dashboard/configuracoes')} 
             style={{ 

@@ -5,8 +5,8 @@ import { Dashboard } from './pages/Dashboard';
 import { Login } from './pages/Login'
 import { Toaster } from 'react-hot-toast';
 import { VisaoGeral } from './pages/Gerencial';
-import { Relatorios } from './pages/Relatorios';
 import { Config } from './pages/Config';
+import { RelVeiculos } from './pages/RelVeiculos';
 
 function App() {
   return (
@@ -19,7 +19,10 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />}>
             <Route index element={<VisaoGeral />} />
-            <Route path="relatorios" element={<Relatorios />} />
+
+            <Route path="relatorios/veiculos" element={<RelVeiculos />} />
+            {/* <Route path="relatorios/abastecimento" element={<RelAbastece />} />
+            <Route path="relatorios/dp" element={<RelatoriosRH />} /> */}
             <Route path="configuracoes" element={<Config />} />
           </Route>
           </Route>

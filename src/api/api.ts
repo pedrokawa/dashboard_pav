@@ -17,4 +17,20 @@ export const api = {
 
         return await response.json();
     },
+
+    getVeiculos: async () => {
+        const response = await fetch(`${BASE_URL}/api/veiculos`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        if (!response.ok){
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message ||'Erro ao buscar veículos.');
+        }
+
+        return await response.json();
+    }
 }
