@@ -122,7 +122,7 @@ export const Dashboard = () => {
                 </li>
                 
                 <li 
-                  // onClick={() => navigate('/dashboard/relatorios/abastecimentos')}
+                  onClick={() => navigate('/dashboard/relatorios/abastecimentos')}
                   style={{ 
                     padding: '0.5rem 1rem', borderRadius: '0.5rem', cursor: 'pointer', fontSize: '0.9rem',
                     backgroundColor: location.pathname === '/dashboard/relatorios/abastecimentos' ? 'rgba(255,255,255,0.1)' : 'transparent',

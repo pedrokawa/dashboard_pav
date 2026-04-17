@@ -7,6 +7,7 @@ import { Toaster } from 'react-hot-toast';
 import { VisaoGeral } from './pages/Gerencial';
 import { Config } from './pages/Config';
 import { RelVeiculos } from './pages/RelVeiculos';
+import { RelAbasteci } from './pages/RelAbasteci';
 
 function App() {
   return (
@@ -21,8 +22,8 @@ function App() {
             <Route index element={<VisaoGeral />} />
 
             <Route path="relatorios/veiculos" element={<RelVeiculos />} />
-            {/* <Route path="relatorios/abastecimento" element={<RelAbastece />} />
-            <Route path="relatorios/dp" element={<RelatoriosRH />} /> */}
+            <Route path="relatorios/abastecimentos" element={<RelAbasteci/>} />
+            {/* <Route path="relatorios/dp" element={<RelatoriosRH />} /> */}
             <Route path="configuracoes" element={<Config />} />
           </Route>
           </Route>

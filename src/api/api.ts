@@ -32,5 +32,22 @@ export const api = {
         }
 
         return await response.json();
+    },
+
+    getAbastecimentos: async () => {
+        const response = await fetch(`${BASE_URL}/api/abastecimento`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        if (!response.ok){
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message ||'Erro ao buscar abastecimentos.');
+        }
+
+        return await response.json();
     }
+
 }
