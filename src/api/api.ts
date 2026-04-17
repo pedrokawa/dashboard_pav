@@ -48,6 +48,21 @@ export const api = {
         }
 
         return await response.json();
-    }
+    },
 
+    getUsers: async () => {
+        const response = await fetch(`${BASE_URL}/api/usuario`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        if (!response.ok){
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message ||'Erro ao buscar usuários.');
+        }
+
+        return await response.json();
+    }
 }

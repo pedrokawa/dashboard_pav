@@ -2,6 +2,7 @@ import { DataTable, type ColumnConfig } from "../components/DataTable";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { api } from "../api/api";
+import { Loading } from "../components/Loading";
 
 interface Veiculo {
     id: number;
@@ -18,7 +19,7 @@ interface Veiculo {
 export const RelVeiculos = () => {
 
     const [frota, setFrota] = useState<Veiculo[]>([]);
-    const [, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchVeiculos = async () => {
@@ -70,7 +71,12 @@ export const RelVeiculos = () => {
         <h1 style={{ margin: '0 0 1.5rem 0', color: 'var(--texto-escuro)', fontSize: '1.8rem' }}>
           Frota e Equipamentos
         </h1>
-        <DataTable columns={colunas} data={frota} />
+    
+    {isLoading ? (
+        <Loading text="Buscando veículos..." />
+    ) : (
+        <DataTable columns={colunas} data={frota} />    
+    )}
     </div>
     </>
   );

@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { api } from "../api/api";
 import { DataTable, type ColumnConfig } from "../components/DataTable";
 import { dateFormat } from '../utils/dateFormat';
+import { Loading } from "../components/Loading";
 
 interface Abastecimento {
     id: number;
@@ -91,9 +92,7 @@ return (
       </div>
 
       {isLoading ? (
-        <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--texto-mutado)' }}>
-          Buscando registros... ⏳
-        </div>
+        <Loading text="Buscando abastecimento..." />
       ) : (
         <DataTable columns={colunas} data={abastecimentos} />
       )}
