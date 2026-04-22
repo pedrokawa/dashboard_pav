@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { api } from "../api/api";
 import { Loading } from "../components/Loading";
 import { ExportButton } from "../components/ExportButton";
+import { exportToExcel } from "../utils/exportExcel";
 
 interface Veiculo {
     id: number;
@@ -72,14 +73,22 @@ export const RelVeiculos = () => {
     <div style={{ maxWidth: '100%'}}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
             <h1 style={{ margin: 0, color: 'var(--texto-escuro)', fontSize: '1.8rem' }}>
-            Frota e Equipamentos
+            Frota
             </h1>
 
             <ExportButton
                 disabled={isLoading}
                 onClick={() => {
-                console.log('Clicado');
-            }} />
+                    const formatData = frota.map((item) => ({
+                        'Cód. Frota': item.codigoFrota,
+                        'Placa': item.placa,
+                        'Veículo': `${item.marca}/${item.modelo}`,
+                        'Ano': `${item.anoFabricacao}/${item.anoModelo}`,
+                        'Combustível': item.combustivel,
+                        'Status': item.status
+                    }));
+                    exportToExcel(formatData, "Relatório de Frota");
+                }} />
         </div>
     
     {isLoading ? (

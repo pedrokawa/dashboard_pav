@@ -5,7 +5,7 @@ import { DataTable, type ColumnConfig } from "../components/DataTable";
 import { dateFormat } from '../utils/dateFormat';
 import { Loading } from "../components/Loading";
 import { ExportButton } from "../components/ExportButton";
-
+import { exportToExcel } from "../utils/exportExcel";
 interface Abastecimento {
     id: number;
     placa: string;
@@ -94,7 +94,20 @@ return (
         <ExportButton
         disabled={isLoading}
         onClick={() => {
-          console.log('Clicado');
+          const formatData = abastecimentos.map((item) => ({
+            'Data': dateFormat(item.createdAt),
+            'Placa': item.placa,
+            'Veículo': `${item.marca}/${item.modelo}`,
+            'KM': item.km,
+            'Horímetro': item.horimetro || 'N/A',
+            'Operador': item.operador,
+            'Litros': Number(item.litros),
+            'Preco': Number(item.preco),
+            'Total': Number(item.total),
+            'Posto': item.posto,
+          }));
+          exportToExcel(formatData, "Relatório de Abastecimentos");
+
         }} />
         
       </div>

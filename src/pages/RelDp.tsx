@@ -5,6 +5,7 @@ import { DataTable, type ColumnConfig } from "../components/DataTable";
 import { dateFormat } from "../utils/dateFormat";
 import { Loading } from "../components/Loading";
 import { ExportButton } from "../components/ExportButton";
+import { exportToExcel } from "../utils/exportExcel";
 
 interface Dp {
     id: number;
@@ -55,8 +56,12 @@ export const RelDp = () => {
         <ExportButton
             disabled={isLoading}
             onClick={() => {
-            console.log('Clicado');
-        }} />
+                const formatData = dps.map((item) => ({
+                    'Nome': item.user,
+                    'Atividade desde': dateFormat(item.createdAt),
+                }));
+                exportToExcel(formatData, "Relatório de Departamento Pessoal");
+            }} />
         
     </div>    
     { isLoading ? (
