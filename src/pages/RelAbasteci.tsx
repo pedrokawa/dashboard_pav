@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { api } from "../api/api";
 import { DataTable, type ColumnConfig } from "../components/DataTable";
-import { dateFormat } from '../utils/dateFormat';
+// import { dateFormat } from '../utils/dateFormat';
 import { Loading } from "../components/Loading";
 import { ExportButton } from "../components/ExportButton";
 import { exportToExcel } from "../utils/exportExcel";
@@ -19,6 +19,7 @@ interface Abastecimento {
     total: string;
     posto: string;
     createdAt: string;   
+    dataAbastecimento: string;
 }
 
 
@@ -47,10 +48,10 @@ export const RelAbasteci = () => {
 
     const colunas: ColumnConfig<Abastecimento>[] = [
         { 
-        key: 'createdAt', 
+        key: 'dataAbastecimento', 
         label: 'Data', 
         align: 'left',
-        render: (row) => dateFormat(row.createdAt)
+        render: (row) => row.dataAbastecimento
         },
         { key: 'placa', label: 'Placa', align: 'left' },
         { 
@@ -63,19 +64,19 @@ export const RelAbasteci = () => {
         { key: 'operador', label: 'Operador', align: 'left' },
         { 
         key: 'litros', 
-        label: 'litros', 
+        label: 'Litros', 
         align: 'left',
         render: (row) => `${row.litros} litros` 
         },
         {
         key: 'preco', 
-        label: 'preco', 
+        label: 'Preço', 
         align: 'left',
         render: (row) => `R$ ${row.preco} ` 
         },
         { 
         key: 'total', 
-        label: 'total', 
+        label: 'Total', 
         align: 'left',
         // Formata como Moeda (R$)
         render: (row) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(row.total))
@@ -95,14 +96,14 @@ return (
         disabled={isLoading}
         onClick={() => {
           const formatData = abastecimentos.map((item) => ({
-            'Data': dateFormat(item.createdAt),
+            'Data': item.dataAbastecimento,
             'Placa': item.placa,
             'Veículo': `${item.marca}/${item.modelo}`,
             'KM': item.km,
             'Horímetro': item.horimetro || 'N/A',
             'Operador': item.operador,
             'Litros': Number(item.litros),
-            'Preco': Number(item.preco),
+            'Preço': Number(item.preco),
             'Total': Number(item.total),
             'Posto': item.posto,
           }));
