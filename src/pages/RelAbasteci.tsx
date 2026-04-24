@@ -6,6 +6,7 @@ import { DataTable, type ColumnConfig } from "../components/DataTable";
 import { Loading } from "../components/Loading";
 import { ExportButton } from "../components/ExportButton";
 import { exportToExcel } from "../utils/exportExcel";
+import { SearchBar } from "../components/SearchBar";
 interface Abastecimento {
     id: number;
     placa: string;
@@ -27,6 +28,7 @@ export const RelAbasteci = () => {
 
     const [abastecimentos, setAbastecimentos] = useState<Abastecimento[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [termoBusca, setTermoBusca] = useState('');
 
     useEffect(() => {
         const fetchAbastecimentos = async () => {
@@ -85,13 +87,34 @@ export const RelAbasteci = () => {
         
     ];
 
+    const abastecimentosFiltrados = abastecimentos.filter((item) => {
+      const termo = termoBusca.toLowerCase();
+      return (
+        item.dataAbastecimento.toLowerCase().includes(termo) ||
+        item.placa.toLowerCase().includes(termo) ||
+        item.marca.toLowerCase().includes(termo) ||
+        item.modelo.toLowerCase().includes(termo) ||
+        item.operador.toLowerCase().includes(termo) ||
+        item.posto.toLowerCase().includes(termo)
+      );
+    });
+
 return (
+  <>
     <div style={{ width: '100%' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <h1 style={{ margin: 0, color: 'var(--texto-escuro)', fontSize: '1.8rem' }}>
           Controle de Abastecimentos
         </h1>
 
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+
+        <SearchBar
+          value={termoBusca}
+          onChange={setTermoBusca}
+          placeholder="Buscar abastecimentos..."
+        />
+        
         <ExportButton
         disabled={isLoading}
         onClick={() => {
@@ -110,14 +133,16 @@ return (
           exportToExcel(formatData, "Relatório de Abastecimentos");
 
         }} />
-        
+        </div>  
       </div>
 
       {isLoading ? (
         <Loading text="Buscando abastecimento..." />
       ) : (
-        <DataTable columns={colunas} data={abastecimentos} />
+        <DataTable columns={colunas} data={abastecimentosFiltrados} />
       )}
     </div>
+  </>
+  
   );
 };

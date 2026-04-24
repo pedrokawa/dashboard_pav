@@ -5,7 +5,7 @@ import { api } from "../api/api";
 import { Loading } from "../components/Loading";
 import { ExportButton } from "../components/ExportButton";
 import { exportToExcel } from "../utils/exportExcel";
-
+import { SearchBar } from "../components/SearchBar";
 interface Veiculo {
     id: number;
     placa: string;
@@ -22,6 +22,7 @@ export const RelVeiculos = () => {
 
     const [frota, setFrota] = useState<Veiculo[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [termoBusca, setTermoBusca] = useState('');
 
     useEffect(() => {
         const fetchVeiculos = async () => {
@@ -68,6 +69,21 @@ export const RelVeiculos = () => {
         }
   ];
 
+  const veiculoFiltrado = frota.filter((item) => {
+    const termo = termoBusca.toLowerCase();
+
+    return (
+        item.codigoFrota.toLowerCase().includes(termo) ||
+        item.placa.toLowerCase().includes(termo) ||
+        item.marca.toLowerCase().includes(termo) ||
+        item.modelo.toLowerCase().includes(termo) ||
+        String(item.anoFabricacao).toLowerCase().includes(termo) ||
+        String(item.anoModelo).toLowerCase().includes(termo) ||
+        item.combustivel.toLowerCase().includes(termo) ||
+        item.status.toLowerCase().includes(termo)
+    );
+  });
+
   return (
     <>
     <div style={{ maxWidth: '100%'}}>
@@ -76,6 +92,14 @@ export const RelVeiculos = () => {
             Frota
             </h1>
 
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center'}}>
+
+            <SearchBar
+            value={termoBusca}
+            onChange={setTermoBusca}
+            placeholder="Buscar veículos..." 
+            />
+            
             <ExportButton
                 disabled={isLoading}
                 onClick={() => {
@@ -88,13 +112,14 @@ export const RelVeiculos = () => {
                         'Status': item.status
                     }));
                     exportToExcel(formatData, "Relatório de Frota");
-                }} />
+            }} />
+            </div>    
         </div>
     
     {isLoading ? (
         <Loading text="Buscando veículos..." />
     ) : (
-        <DataTable columns={colunas} data={frota} />    
+        <DataTable columns={colunas} data={veiculoFiltrado} />    
     )}
     </div>
     </>

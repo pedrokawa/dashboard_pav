@@ -6,7 +6,7 @@ import { dateFormat } from "../utils/dateFormat";
 import { Loading } from "../components/Loading";
 import { ExportButton } from "../components/ExportButton";
 import { exportToExcel } from "../utils/exportExcel";
-
+import { SearchBar } from "../components/SearchBar";
 interface Dp {
     id: number;
     user: string;
@@ -17,6 +17,7 @@ export const RelDp = () => {
 
     const [dps, setDps] = useState<Dp[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [termoBusca, setTermoBusca] = useState('');
 
     useEffect(() => {
         const fetchDps = async () => {
@@ -45,6 +46,14 @@ export const RelDp = () => {
         }
     ];
 
+    const dpFiltrado = dps.filter((item) => {
+        const termo = termoBusca.toLowerCase();
+        return (
+        item.user.toLowerCase().includes(termo) ||
+        item.createdAt.toLowerCase().includes(termo)    
+        );
+    });
+
     return (
     <>
     <div style={{ width: '100%'}}>
@@ -53,21 +62,29 @@ export const RelDp = () => {
            Departamento Pessoal
         </h1>
 
-        <ExportButton
-            disabled={isLoading}
-            onClick={() => {
-                const formatData = dps.map((item) => ({
-                    'Nome': item.user,
-                    'Atividade desde': dateFormat(item.createdAt),
-                }));
-                exportToExcel(formatData, "Relatório de Departamento Pessoal");
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center'}}>
+
+            <SearchBar 
+            value={termoBusca}
+            onChange={setTermoBusca}
+            placeholder="Buscar colaborador..."/>
+
+            <ExportButton
+                disabled={isLoading}
+                onClick={() => {
+                    const formatData = dps.map((item) => ({
+                        'Nome': item.user,
+                        'Atividade desde': dateFormat(item.createdAt),
+                    }));
+                    exportToExcel(formatData, "Relatório de Departamento Pessoal");
             }} />
         
+        </div>
     </div>    
     { isLoading ? (
         <Loading text="Buscando colaboradores..." />
     ) : (
-        <DataTable data={dps} columns={colunas} />
+        <DataTable columns={colunas} data={dpFiltrado}  />
     )}
     </div>
     </>
