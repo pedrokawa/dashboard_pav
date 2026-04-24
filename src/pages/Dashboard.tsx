@@ -61,13 +61,13 @@ export const Dashboard = () => {
               backgroundColor: location.pathname === '/dashboard' ? '#e67e22' : 'transparent', // Destaca o item ativo
               borderRadius: '0.5rem', 
               cursor: 'pointer', 
-              fontWeight: location.pathname === '/dashboard' ? '500' : 'normal', // Deixa o item ativo mais negrito
-              color: location.pathname === '/dashboard' ? '#000000' : '#9CA3AF', // Destaca o item ativo
+              fontWeight:  '500', // Deixa o item ativo mais negrito
+              color: '#000000', // Destaca o item ativo
               }}
               onMouseOver={(e) => { if(location.pathname !== '/dashboard') e.currentTarget.style.color='#000000';}}
-              onMouseOut={(e) => { if(location.pathname !== '/dashboard') e.currentTarget.style.color='#9CA3AF';}}
+              onMouseOut={(e) => { if(location.pathname !== '/dashboard') e.currentTarget.style.color='#000000';}}
               >
-              📊 Visão Geral
+              Visão Geral
             </li>
             {/* Itens inativos */}
             {/* BOTÃO PAI */}
@@ -87,13 +87,13 @@ export const Dashboard = () => {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 backgroundColor: location.pathname.includes('/dashboard/relatorios') ? '#e67e22' : 'transparent',
-                color: location.pathname.includes('/dashboard/relatorios') ? 'var(--texto-claro)' : 'var(--texto-mutado)',
-                fontWeight: location.pathname.includes('/dashboard/relatorios') ? '500' : 'normal'
+                color: '#000000',
+                fontWeight: '500',
               }}
-              onMouseOver={(e) => { if(!location.pathname.includes('/dashboard/relatorios')) e.currentTarget.style.color = '#e67e22'; }}
-              onMouseOut={(e) => { if(!location.pathname.includes('/dashboard/relatorios')) e.currentTarget.style.color = '#e67e22'; }}
+              onMouseOver={(e) => { if(!location.pathname.includes('/dashboard/relatorios')) e.currentTarget.style.color = '#000000'; }}
+              onMouseOut={(e) => { if(!location.pathname.includes('/dashboard/relatorios')) e.currentTarget.style.color = '#000000'; }}
             >
-              <span>📋 Relatórios</span>
+              <span>Relatórios</span>
               {/* Seta que gira quando abre/fecha */}
               <span style={{ fontSize: '0.8rem', transform: isRelatorioOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }}>
                 ▼
@@ -112,56 +112,75 @@ export const Dashboard = () => {
                   onClick={() => navigate('/dashboard/relatorios/veiculos')}
                   style={{ 
                     padding: '0.5rem 1rem', borderRadius: '0.5rem', cursor: 'pointer', fontSize: '0.9rem',
-                    backgroundColor: location.pathname === '/dashboard/relatorios/veiculos' ? 'rgba(255,255,255,0.1)' : 'transparent',
-                    color: location.pathname === '/dashboard/relatorios/veiculos' ? 'var(--texto-claro)' : 'var(--texto-mutado)'
+                    backgroundColor: location.pathname === '/dashboard/relatorios/veiculos' ? '#ACB5A6' : 'transparent',
+                    color: '#000000',
+                    fontWeight: '500',
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.color = 'var(--texto-claro)'}
-                  onMouseOut={(e) => { if(location.pathname !== '/dashboard/relatorios/veiculos') e.currentTarget.style.color = 'var(--texto-mutado)'; }}
+                  onMouseOver={(e) => e.currentTarget.style.color = '#000000'}
+                  onMouseOut={(e) => { if(location.pathname !== '/dashboard/relatorios/veiculos') e.currentTarget.style.color = '#000000'; }}
                 >
-                  🚜 Veículos
+                  Veículos
                 </li>
                 
                 <li 
                   onClick={() => navigate('/dashboard/relatorios/abastecimentos')}
                   style={{ 
                     padding: '0.5rem 1rem', borderRadius: '0.5rem', cursor: 'pointer', fontSize: '0.9rem',
-                    backgroundColor: location.pathname === '/dashboard/relatorios/abastecimentos' ? 'rgba(255,255,255,0.1)' : 'transparent',
-                    color: location.pathname === '/dashboard/relatorios/abastecimentos' ? 'var(--texto-claro)' : 'var(--texto-mutado)'
+                    backgroundColor: location.pathname === '/dashboard/relatorios/abastecimentos' ? '#ACB5A6' : 'transparent',
+                    color: '#000000',
+                    fontWeight: '500',
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.color = 'var(--texto-claro)'}
-                  onMouseOut={(e) => { if(location.pathname !== '/dashboard/relatorios/abastecimentos') e.currentTarget.style.color = 'var(--texto-mutado)'; }}
+                  onMouseOver={(e) => e.currentTarget.style.color = '#000000'}
+                  onMouseOut={(e) => { if(location.pathname !== '/dashboard/relatorios/abastecimentos') e.currentTarget.style.color = '#000000'; }}
                 >
-                  ⛽ Abastecimentos
+                  Abastecimentos
                 </li>
 
                 <li 
                   onClick={() => navigate('/dashboard/relatorios/dp')}
                   style={{ 
                     padding: '0.5rem 1rem', borderRadius: '0.5rem', cursor: 'pointer', fontSize: '0.9rem',
-                    backgroundColor: location.pathname === '/dashboard/relatorios/dp' ? 'rgba(255,255,255,0.1)' : 'transparent',
-                    color: location.pathname === '/dashboard/relatorios/dp' ? 'var(--texto-claro)' : 'var(--texto-mutado)'
+                    backgroundColor: location.pathname === '/dashboard/relatorios/dp' ? '#ACB5A6' : 'transparent',
+                    color: '#000000',
+                    fontWeight: '500'
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.color = 'var(--texto-claro)'}
-                  onMouseOut={(e) => { if(location.pathname !== '/dashboard/relatorios/dp') e.currentTarget.style.color = 'var(--texto-mutado)'; }}
+                  onMouseOver={(e) => e.currentTarget.style.color = '#000000'}
+                  onMouseOut={(e) => { if(location.pathname !== '/dashboard/relatorios/dp') e.currentTarget.style.color = '#000000'; }}
                 >
-                  👷 Depto. Pessoal
+                  Depto. Pessoal
                 </li>
               </ul>
             )}
+            <li
+            // onClick={() => navigate('/dashboard/configuracoes')} 
+            style={{ 
+            padding: '0.75rem 1rem', 
+            borderRadius: '0.5rem', 
+            cursor: 'pointer', 
+            color: '#000000', 
+            backgroundColor: location.pathname === '/dashboard/medicao' ? '#e67e22' : 'transparent', 
+            fontWeight:'500',
+            }}
+            // onMouseOver={(e) => { if(location.pathname !== '/dashboard/configuracoes') e.currentTarget.style.color='#000000';}}
+            // onMouseOut={(e) => { if(location.pathname !== '/dashboard/configuracoes') e.currentTarget.style.color='#9CA3AF';}}
+            >
+              Medições
+            </li>
+
             <li
             onClick={() => navigate('/dashboard/configuracoes')} 
             style={{ 
             padding: '0.75rem 1rem', 
             borderRadius: '0.5rem', 
             cursor: 'pointer', 
-            color: location.pathname === '/dashboard/configuracoes' ? '#000000' : '#9CA3AF', 
+            color: '#000000', 
             backgroundColor: location.pathname === '/dashboard/configuracoes' ? '#e67e22' : 'transparent', 
-            fontWeight: location.pathname === '/dashboard/configuracoes' ? '500' : 'normal',
+            fontWeight: '500',
             }}
             onMouseOver={(e) => { if(location.pathname !== '/dashboard/configuracoes') e.currentTarget.style.color='#000000';}}
-            onMouseOut={(e) => { if(location.pathname !== '/dashboard/configuracoes') e.currentTarget.style.color='#9CA3AF';}}
+            onMouseOut={(e) => { if(location.pathname !== '/dashboard/configuracoes') e.currentTarget.style.color='#000000';}}
             >
-              ⚙️ Configurações
+              Configurações
             </li>
           </ul>
         </nav>
