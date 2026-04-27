@@ -9,6 +9,7 @@ import { Config } from './pages/Config';
 import { RelVeiculos } from './pages/RelVeiculos';
 import { RelAbasteci } from './pages/RelAbasteci';
 import { RelDp } from './pages/RelDp';
+import { Medicao } from './pages/Medicao'
 
 function App() {
   return (
@@ -25,8 +26,8 @@ function App() {
             <Route path="relatorios/veiculos" element={<RelVeiculos />} />
             <Route path="relatorios/abastecimentos" element={<RelAbasteci/>} />
             <Route path="relatorios/dp" element={<RelDp />} />
+            <Route path="medicao" element={<Medicao />} />
             <Route path="configuracoes" element={<Config />} />
-            {/* <Route path="medicao" element={<Medicao />} /> */}
           </Route>
           </Route>
           <Route path="*" element={<Navigate to="/login" replace />} />

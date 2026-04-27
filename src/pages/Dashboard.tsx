@@ -152,7 +152,7 @@ export const Dashboard = () => {
               </ul>
             )}
             <li
-            // onClick={() => navigate('/dashboard/configuracoes')} 
+            onClick={() => navigate('/dashboard/medicao')} 
             style={{ 
             padding: '0.75rem 1rem', 
             borderRadius: '0.5rem', 
