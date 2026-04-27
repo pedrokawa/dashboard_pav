@@ -6,34 +6,34 @@ export const Medicao = () => {
       id: 'producao',
       label: 'Produção MRAF',
       // Aqui dentro você coloca a tabela inteira!
-      // content: <DataTable columns={colunas} data={abastecimentosFiltrados} /> 
+      content: <div>Em breve: Gráficos de consumo por motorista vão entrar aqui!</div>
     },
     {
       id: 'emulsao',
       label: 'Emulsão',
-      // content: <div>Em breve: Gráficos de consumo por motorista vão entrar aqui!</div>
+      content: <div>Em breve: Gráficos de consumo por motorista vão entrar aqui!</div>
     },
     {
       id: 'agregados',
       label: 'Agregados',
       // Aqui dentro você coloca a tabela inteira!
-      // content: <DataTable columns={colunas} data={abastecimentosFiltrados} /> 
+      content: <div>Em breve: Gráficos de consumo por motorista vão entrar aqui!</div>
     },
     {
       id: 'consumo',
       label: 'Consumo da Obra',
-      // content: <div>Em breve: Gráficos de consumo por motorista vão entrar aqui!</div>
+      content: <div>Em breve: Gráficos de consumo por motorista vão entrar aqui!</div>
     },
     {
       id: 'equipe',
       label: 'Equipe',
       // Aqui dentro você coloca a tabela inteira!
-      // content: <DataTable columns={colunas} data={abastecimentosFiltrados} /> 
+      content: <div>Em breve: Gráficos de consumo por motorista vão entrar aqui!</div>
     },
     {
       id: 'Equipamentos',
       label: 'Equipamentos',
-      // content: <div>Em breve: Gráficos de consumo por motorista vão entrar aqui!</div>
+      content: <div>Em breve: Gráficos de consumo por motorista vão entrar aqui!</div>
     }    
     
 
