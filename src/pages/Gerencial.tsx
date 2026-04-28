@@ -1,3 +1,5 @@
+import { ActionCard } from "../components/ActionCard";
+
 export const VisaoGeral = () => {
   return (
     <>
@@ -5,16 +7,53 @@ export const VisaoGeral = () => {
     style={{ padding: '0.5rem 0.5rem', color: 'var(--texto-escuro)' }}
     >
       <h1 style={{ margin: '0 0 1.5rem 0', color: 'var(--texto-escuro)', fontSize: '1.8rem' }}>
-        Visão Geral
+        Selecione o que faremos:
       </h1>
-      <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
-        <div style={{ flex: '1 1 250px', backgroundColor: 'var(--bg-card)', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-            <h3 style={{ margin: 0, color: 'var(--texto-mutado)', fontSize: '0.9rem' }}>Acessos Hoje</h3>
-            <p style={{ margin: '0.5rem 0 0 0', fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--texto-escuro)' }}>14</p>
-        </div>
-        <div style={{ flex: '1 1 250px', backgroundColor: 'var(--bg-card)', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-            <h3 style={{ margin: 0, color: 'var(--texto-mutado)', fontSize: '0.9rem' }}>Status do Sistema</h3>
-            <p style={{ margin: '0.5rem 0 0 0', fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--status-sucesso)' }}>Online</p>
+      <div style={{ marginTop: '3rem' }}>
+        
+        {/* Grid responsivo: se a tela diminuir, os cards caem pra linha de baixo sozinhos */}
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+          gap: '1.5rem' 
+        }}>
+          
+
+          <ActionCard 
+            titulo="Gestão de Frota" 
+            descricao="Visualize caminhões, máquinas e seus status." 
+            // icone={<LocalShippingIcon />} 
+            rota="/dashboard/relatorios/veiculos" 
+          />
+
+          <ActionCard 
+            titulo="Abastecimentos" 
+            descricao="Controle de consumo, histórico de litros e gastos." 
+            // icone={<LocalGasStationIcon />} 
+            rota="/dashboard/relatorios/abastecimentos" 
+          />
+
+          <ActionCard 
+            titulo="Departamento Pessoal" 
+            descricao="Relatórios de colaboradores." 
+            // icone={<AssessmentIcon />} 
+            rota="/dashboard/relatorios/dp" 
+          />
+          
+          <ActionCard 
+            titulo="Medição Diária" 
+            descricao="Relatórios de produtividade e lançamentos de campo." 
+            // icone={<AssessmentIcon />} 
+            rota="/dashboard/medicao" 
+          />
+
+          <ActionCard 
+            titulo="Prestação de Serviços" 
+            descricao="Relatórios de serviços de terceiros." 
+            // icone={<AssessmentIcon />} 
+            rota="/dashboard" 
+          />
+
         </div>
       </div>
     </div>  

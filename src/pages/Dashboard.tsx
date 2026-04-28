@@ -67,7 +67,7 @@ export const Dashboard = () => {
               onMouseOver={(e) => { if(location.pathname !== '/dashboard') e.currentTarget.style.color='#000000';}}
               onMouseOut={(e) => { if(location.pathname !== '/dashboard') e.currentTarget.style.color='#000000';}}
               >
-              Visão Geral
+              Página Inicial
             </li>
             {/* Itens inativos */}
             {/* BOTÃO PAI */}
