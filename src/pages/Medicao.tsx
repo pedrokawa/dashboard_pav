@@ -1,6 +1,6 @@
 import { Tabs, type TabItem } from '../components/Tabs';
 import { Button } from '@mui/material';
-import { useState } from 'react';
+import { useState, type DragEvent, type ChangeEvent } from 'react';
 import { Modal } from '../components/Modal';
 
 // import { DataTable, type ColumnConfig } from "../components/DataTable";
@@ -20,7 +20,38 @@ import { Modal } from '../components/Modal';
 export const Medicao = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [arquivo, setArquivo] = useState<File | null>(null);
 
+  const handleDragOver = (e: DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+  
+  const handleDragLeave = (e: DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: DragEvent<HTMLLabelElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      setArquivo(e.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setArquivo(e.target.files[0]);
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setArquivo(null);
+  }
 
   // const [medicao, setMedicao] = useState<Producao[]>([]);
   // const [isLoading, setIsLoading] = useState(true);
@@ -136,16 +167,7 @@ export const Medicao = () => {
       <div>
         <Tabs tabs={myAbas} />
       </div>
-      {/* <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
-        <div style={{ flex: '1 1 250px', backgroundColor: 'var(--bg-card)', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-            <h3 style={{ margin: 0, color: 'var(--texto-mutado)', fontSize: '0.9rem' }}>Estamos na medição</h3>
-            <p style={{ margin: '0.5rem 0 0 0', fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--texto-escuro)' }}>4</p>
-        </div>
-        <div style={{ flex: '1 1 250px', backgroundColor: 'var(--bg-card)', padding: '1.5rem', borderRadius: '0.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-            <h3 style={{ margin: 0, color: 'var(--texto-mutado)', fontSize: '0.9rem' }}>Período</h3>
-            <p style={{ margin: '0.5rem 0 0 0', fontSize: '1.8rem', fontWeight: 'bold', color: 'var(--status-sucesso)' }}>11/04/2026 a 10/05/2026</p>
-        </div> */}
-      {/* </div> */}
+
     </div>  
 
     <Modal
@@ -153,54 +175,85 @@ export const Medicao = () => {
       onClose={() => setIsModalOpen(false)}
       titulo="Importar Produção"
     >
-        <div style={{
-          border: '2px dashed #D1D5DB',
-          borderRadius: '0.5rem',
-          padding: '2.5rem 1rem',
-          textAlign: 'center',
-          backgroundColor: '#F9FAFB',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '1rem'
-        }}>
-          
-          <div style={{ color: '#6B7280' }}>
-            <svg width="40" height="65" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="17 8 12 3 7 8"></polyline>
-              <line x1="12" y1="3" x2="12" y2="15"></line>
-            </svg>
-          </div>
 
-          <div>
-            <p style={{ margin: 0, color: '#374151', fontWeight: 500 }}>
-              Selecione seu arquivo Excel
-            </p>
-            <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', color: '#9CA3AF' }}>
-              (Em breve: Arraste e solte seu arquivo aqui)
-            </p>
-          </div>
+      {/* Área de Input de Arquivo Interativa */}
+        <label
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          style={{
+            border: isDragging ? '2px dashed #F97316' : '2px dashed #D1D5DB', // Fica laranja ao arrastar!
+            backgroundColor: isDragging ? '#FFF7ED' : '#F9FAFB', // Fundo muda também
+            borderRadius: '0.5rem',
+            padding: '2.5rem 1rem',
+            textAlign: 'center',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '1rem',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          {arquivo ? (
+            // VISUAL QUANDO O ARQUIVO ESTÁ CARREGADO
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
+              <div style={{ color: '#10B981' }}> {/* Ícone de Check Verde */}
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+              </div>
+              <p style={{ margin: 0, color: '#374151', fontWeight: 600 }}>{arquivo.name}</p>
+              <p style={{ margin: 0, fontSize: '0.85rem', color: '#6B7280' }}>
+                {(arquivo.size / 1024 / 1024).toFixed(2)} MB
+              </p>
+              <button 
+                onClick={(e) => {
+                  e.preventDefault(); // Impede de abrir a janela de arquivo de novo
+                  setArquivo(null); // Limpa o estado
+                }}
+                style={{ 
+                  marginTop: '0.5rem', padding: '0.25rem 0.5rem', color: '#EF4444', 
+                  background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold'
+                }}
+              >
+                Remover planilha
+              </button>
+            </div>
+          ) : (
+            // VISUAL PADRÃO QUANDO ESTÁ VAZIO
+            <>
+              <div style={{ color: isDragging ? '#F97316' : '#6B7280', transition: 'color 0.2s' }}>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+              </div>
+              <div>
+                <p style={{ margin: 0, color: isDragging ? '#F97316' : '#374151', fontWeight: 500 }}>
+                  {isDragging ? 'Solte a planilha aqui!' : 'Clique ou arraste seu arquivo Excel'}
+                </p>
+              </div>
+            </>
+          )}
 
-          {/* O input nativo aceitando apenas Excel */}
+          {/* O input original fica invisível, quem faz o trabalho é a <label> */}
           <input 
             type="file" 
             accept=".xlsx, .xls"
-            style={{
-              marginTop: '0.5rem',
-              color: '#4B5563',
-              fontSize: '0.9rem',
-              cursor: 'pointer'
-            }}
+            onChange={handleFileChange}
+            style={{ display: 'none' }} 
           />
-        </div>
+        </label>
 
         {/* Botões de Ação do Modal */}
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.5rem' }}>
           <Button
             variant="contained" 
             color="primary"
-            onClick={() => setIsModalOpen(false)}
+            onClick={closeModal}
             style={{
               textTransform: 'none',
               borderRadius: '0.5rem',
