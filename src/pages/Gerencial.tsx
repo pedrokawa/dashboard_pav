@@ -56,7 +56,7 @@ export const VisaoGeral = () => {
             titulo="Prestação de Serviços" 
             descricao="Relatórios de serviços de terceiros." 
             icone={<EditRoadOutlinedIcon />} 
-            rota="/dashboard" 
+            rota="/dashboard/terceiros" 
           />
 
         </div>

@@ -168,6 +168,22 @@ export const Dashboard = () => {
             </li>
 
             <li
+            onClick={() => navigate('/dashboard/terceiros')} 
+            style={{ 
+            padding: '0.75rem 1rem', 
+            borderRadius: '0.5rem', 
+            cursor: 'pointer', 
+            color: '#000000', 
+            backgroundColor: location.pathname === '/dashboard/terceiros' ? '#e67e22' : 'transparent', 
+            fontWeight: '500',
+            }}
+            onMouseOver={(e) => { if(location.pathname !== '/dashboard/terceiros') e.currentTarget.style.color='#000000';}}
+            onMouseOut={(e) => { if(location.pathname !== '/dashboard/terceiros') e.currentTarget.style.color='#000000';}}
+            >
+              Prestação de Serviços
+            </li>
+
+            <li
             onClick={() => navigate('/dashboard/configuracoes')} 
             style={{ 
             padding: '0.75rem 1rem', 
@@ -182,6 +198,7 @@ export const Dashboard = () => {
             >
               Configurações
             </li>
+
           </ul>
         </nav>
       </aside>

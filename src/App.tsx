@@ -10,6 +10,7 @@ import { RelVeiculos } from './pages/RelVeiculos';
 import { RelAbasteci } from './pages/RelAbasteci';
 import { RelDp } from './pages/RelDp';
 import { Medicao } from './pages/Medicao'
+import { Terceiros } from './pages/Terceiros';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="relatorios/dp" element={<RelDp />} />
             <Route path="medicao" element={<Medicao />} />
             <Route path="configuracoes" element={<Config />} />
+            <Route path="terceiros" element={<Terceiros />} />
           </Route>
           </Route>
           <Route path="*" element={<Navigate to="/login" replace />} />
