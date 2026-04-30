@@ -1,5 +1,8 @@
 import { Tabs, type TabItem } from '../components/Tabs';
 import { Button } from '@mui/material';
+import { useState } from 'react';
+import { Modal } from '../components/Modal';
+
 // import { DataTable, type ColumnConfig } from "../components/DataTable";
 // // import { useState } from 'react';
 // interface Producao {
@@ -15,6 +18,9 @@ import { Button } from '@mui/material';
 // }
 
 export const Medicao = () => {
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   // const [medicao, setMedicao] = useState<Producao[]>([]);
   // const [isLoading, setIsLoading] = useState(true);
@@ -64,7 +70,7 @@ export const Medicao = () => {
         variant="contained" 
         color="primary"
         // // startIcon={}
-        // onClick={onClick}
+        onClick={() => setIsModalOpen(true)}
         // disabled={disabled}
         sx={{
           textTransform: 'none',
@@ -141,6 +147,92 @@ export const Medicao = () => {
         </div> */}
       {/* </div> */}
     </div>  
-    </>
+
+    <Modal
+      isOpen={isModalOpen}
+      onClose={() => setIsModalOpen(false)}
+      titulo="Importar Produção"
+    >
+        <div style={{
+          border: '2px dashed #D1D5DB',
+          borderRadius: '0.5rem',
+          padding: '2.5rem 1rem',
+          textAlign: 'center',
+          backgroundColor: '#F9FAFB',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '1rem'
+        }}>
+          
+          <div style={{ color: '#6B7280' }}>
+            <svg width="40" height="65" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+          </div>
+
+          <div>
+            <p style={{ margin: 0, color: '#374151', fontWeight: 500 }}>
+              Selecione seu arquivo Excel
+            </p>
+            <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', color: '#9CA3AF' }}>
+              (Em breve: Arraste e solte seu arquivo aqui)
+            </p>
+          </div>
+
+          {/* O input nativo aceitando apenas Excel */}
+          <input 
+            type="file" 
+            accept=".xlsx, .xls"
+            style={{
+              marginTop: '0.5rem',
+              color: '#4B5563',
+              fontSize: '0.9rem',
+              cursor: 'pointer'
+            }}
+          />
+        </div>
+
+        {/* Botões de Ação do Modal */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.5rem' }}>
+          <Button
+            variant="contained" 
+            color="primary"
+            onClick={() => setIsModalOpen(false)}
+            style={{
+              textTransform: 'none',
+              borderRadius: '0.5rem',
+              fontWeight: 'bold',
+              backgroundColor: '#E5E7EB',
+              borderColor: '#E5E7EB',
+              color: '#000000',
+              width: '11rem',
+              height: '2.8rem',
+              fontSize: '1rem'
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button
+            variant="contained" 
+            color="primary" 
+            style={{
+              textTransform: 'none',
+              borderRadius: '0.5rem',
+              fontWeight: 'bold',
+              backgroundColor: '#e67e22',
+              borderColor: '#E5E7EB',
+              color: '#ffffff',
+              width: '11rem',
+              height: '2.8rem',
+              fontSize: '1rem'}}
+          >
+            Importar
+          </Button>
+        </div>
+    </Modal>
+  </>
   );
 };
