@@ -1,4 +1,9 @@
 import { ActionCard } from "../components/ActionCard";
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
+import PersonIcon from '@mui/icons-material/Person';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import EditRoadOutlinedIcon from '@mui/icons-material/EditRoadOutlined';
 
 export const VisaoGeral = () => {
   return (
@@ -22,35 +27,35 @@ export const VisaoGeral = () => {
           <ActionCard 
             titulo="Gestão de Frota" 
             descricao="Visualize caminhões, máquinas e seus status." 
-            // icone={<LocalShippingIcon />} 
+            icone={<DirectionsCarIcon />}
             rota="/dashboard/relatorios/veiculos" 
           />
 
           <ActionCard 
             titulo="Abastecimentos" 
             descricao="Controle de consumo, histórico de litros e gastos." 
-            // icone={<LocalGasStationIcon />} 
+            icone={<LocalGasStationIcon />} 
             rota="/dashboard/relatorios/abastecimentos" 
           />
 
           <ActionCard 
             titulo="Departamento Pessoal" 
             descricao="Relatórios de colaboradores." 
-            // icone={<AssessmentIcon />} 
+            icone={<PersonIcon />} 
             rota="/dashboard/relatorios/dp" 
           />
           
           <ActionCard 
             titulo="Medição Diária" 
             descricao="Relatórios de produtividade e lançamentos de campo." 
-            // icone={<AssessmentIcon />} 
+            icone={<AssessmentIcon />} 
             rota="/dashboard/medicao" 
           />
 
           <ActionCard 
             titulo="Prestação de Serviços" 
             descricao="Relatórios de serviços de terceiros." 
-            // icone={<AssessmentIcon />} 
+            icone={<EditRoadOutlinedIcon />} 
             rota="/dashboard" 
           />
 
