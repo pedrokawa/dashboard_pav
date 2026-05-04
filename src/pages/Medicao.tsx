@@ -3,21 +3,12 @@ import { Button } from '@mui/material';
 import { useState, type DragEvent, type ChangeEvent } from 'react';
 import { Modal } from '../components/Modal';
 
-// import { DataTable, type ColumnConfig } from "../components/DataTable";
-// // import { useState } from 'react';
-// interface Producao {
-//   data: string;
-//   rodovia: string;
-//   kmini: string;
-//   kmfim: string;
-//   extensao: number;
-//   pista: string;
-//   faixa: string;
-//   largura: number;
-//   producao: number;
-// }
+import * as xlsx from 'xlsx';
+import { SearchBar } from '../components/SearchBar';
 
 export const Medicao = () => {
+
+  const [termoBusca, setTermoBusca] = useState('');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -48,42 +39,35 @@ export const Medicao = () => {
     }
   };
 
+  const importFile = () => {
+    if (!arquivo) {
+      alert('Nenhum arquivo selecionado!');
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const arrayBuffer = e.target?.result;
+      if (arrayBuffer) {
+        const workbook = xlsx.read(arrayBuffer, { type: 'array' });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const data = xlsx.utils.sheet_to_json(worksheet);
+        console.log('Dados importados:', data);
+        alert('Arquivo importado com sucesso! Veja os dados no console.');
+
+        setIsModalOpen(false);
+      }
+    }
+
+    reader.readAsArrayBuffer(arquivo);
+  }
+
   const closeModal = () => {
     setIsModalOpen(false);
     setArquivo(null);
   }
-
-  // const [medicao, setMedicao] = useState<Producao[]>([]);
-  // const [isLoading, setIsLoading] = useState(true);
-  // const [termoBusca, setTermoBusca] = useState('');
-
-  // const colunas: ColumnConfig<Veiculo>[] = [
-  //       { key: 'codigoFrota', label: 'Cód. Frota', align: 'left' },
-  //       { key: 'placa', label: 'Placa', align: 'left' },
-  //       { 
-  //       key: 'modelo', 
-  //       label: 'Marca/Modelo',
-  //       align: 'left', 
-  //       // Um truque legal: juntar Marca e Modelo na mesma coluna para ficar mais limpo!
-  //       render: (row) => `${row.marca} ${row.modelo}` 
-  //       },
-  //       { key: 'anoModelo', label: 'Ano', align: 'left' },
-  //       { key: 'combustivel', label: 'Combustível', align: 'left' },
-  //       { 
-  //       key: 'status', 
-  //       label: 'Status', 
-  //       align: 'left',
-  //       render: (row) => (
-  //           <span style={{
-  //           padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.85rem', fontWeight: '500',
-  //           backgroundColor: row.status === 'Ativo' || row.status === 'Inativo' ? '#D1FAE5' : '#FEE2E2',
-  //           color: row.status === 'Ativo' || row.status === 'Inativo' ? '#065F46' : '#991B1B'
-  //           }}>
-  //           {row.status || 'Desconhecido'}
-  //           </span>
-  //       )
-  //       }
-  // ];
 
   const myAbas: TabItem[] = [
     {
@@ -94,7 +78,7 @@ export const Medicao = () => {
       <>
       <div style={{
         display: 'flex',
-        justifyContent: 'end'
+        justifyContent: 'space-between',
         }}>
         {/* <h1>Em breve: Produção Diária</h1> */}
         <Button 
@@ -115,6 +99,15 @@ export const Medicao = () => {
           fontSize: '1rem'}}
         >Importar Produção
         </Button>
+
+        <div>
+          <SearchBar 
+          value={termoBusca}
+          onChange={setTermoBusca}
+          placeholder='Buscar medição...'
+          />
+
+        </div>
       </div>
 
       {/* <div>
@@ -271,6 +264,8 @@ export const Medicao = () => {
           <Button
             variant="contained" 
             color="primary" 
+            disabled={!arquivo}
+            onClick={importFile}
             style={{
               textTransform: 'none',
               borderRadius: '0.5rem',
