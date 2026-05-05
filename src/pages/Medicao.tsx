@@ -2,6 +2,7 @@ import { Tabs, type TabItem } from '../components/Tabs';
 import { Button } from '@mui/material';
 import { useState, type DragEvent, type ChangeEvent } from 'react';
 import { Modal } from '../components/Modal';
+import { DatePicker } from '../components/DatePicker';
 
 import * as xlsx from 'xlsx';
 import { SearchBar } from '../components/SearchBar';
@@ -9,6 +10,7 @@ import { SearchBar } from '../components/SearchBar';
 export const Medicao = () => {
 
   const [termoBusca, setTermoBusca] = useState('');
+  const [dataFiltro, setDataFiltro] = useState('');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -100,11 +102,16 @@ export const Medicao = () => {
         >Importar Produção
         </Button>
 
-        <div>
+        <div style={{ display: 'flex', gap: '1rem' }}>
           <SearchBar 
           value={termoBusca}
           onChange={setTermoBusca}
           placeholder='Buscar medição...'
+          />
+
+          <DatePicker 
+          value={dataFiltro}
+          onChange={setDataFiltro}
           />
 
         </div>
