@@ -25,7 +25,7 @@ export const DatePicker = ({ value, onChange, label }: DatePickerProps) => {
           fontSize: '0.95rem',
           color: value ? '#111827' : '#9CA3AF', // Fica cinza se estiver vazio
           backgroundColor: '#fff',
-          border: '1px solid #E5E7EB',
+          border: '1px solid #a76e2e',
           borderRadius: '0.5rem',
           outline: 'none',
           fontFamily: 'inherit',

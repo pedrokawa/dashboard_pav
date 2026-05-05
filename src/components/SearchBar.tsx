@@ -11,7 +11,7 @@ export const SearchBar = ({ value, onChange, placeholder = "Pesquisar..." }: Sea
       display: 'flex',
       alignItems: 'center',
       backgroundColor: '#fff',
-      border: '1px solid #E5E7EB',
+      border: '1px solid #a76e2e',
       borderRadius: '0.5rem',
       padding: '0.5rem 0.75rem',
       minWidth: '250px',
