@@ -8,6 +8,7 @@ import { ExportButton } from "../components/ExportButton";
 import { exportToExcel } from "../utils/exportExcel";
 import { SearchBar } from "../components/SearchBar";
 import { AddButton } from "../components/AddButton";
+import { Modal } from "../components/Modal";
 interface Abastecimento {
     id: number;
     placa: string;
@@ -20,7 +21,6 @@ interface Abastecimento {
     preco: string;
     total: string;
     posto: string;
-    createdAt: string;   
     dataAbastecimento: string;
 }
 
@@ -31,6 +31,68 @@ export const RelAbasteci = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [termoBusca, setTermoBusca] = useState('');
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    //estados
+    const [placa, setPlaca] = useState('');
+    const [marca, setMarca] = useState('');
+    const [modelo, setModelo] = useState('');
+    const [km, setKm] = useState('');
+    const [horimetro, setHorimetro] = useState('');
+    const [operador, setOperador] = useState('');
+    const [litros, setLitros] = useState('');
+    const [preco, setPreco] = useState('');
+    const [, setTotal] = useState('');
+    const [posto, setPosto] = useState('');
+    const [dataAbastecimento, setDataAbastecimento] = useState('');
+
+    const handleCadastrarAbastecimento = async (e: React.FormEvent) => {
+      e.preventDefault();
+
+      const valorTotal = parseFloat(litros) * parseFloat(preco);
+    
+      const dadosAbastecimento = {
+        placa: placa.toUpperCase(),
+        marca,
+        modelo,
+        km: km || '0',
+        horimetro: horimetro || '0',
+        operador,
+        litros: parseFloat(litros),
+        preco: parseFloat(preco),
+        total: valorTotal,
+        posto,
+        dataAbastecimento
+      }
+
+      try {
+        await api.postAbast(dadosAbastecimento);
+        toast.success("Abastecimento cadastrado com sucesso!");
+        
+        setPlaca('');
+        setMarca('');
+        setModelo('');
+        setKm('');
+        setHorimetro('');
+        setOperador('');
+        setLitros('');
+        setPreco('');
+        setTotal('');
+        setPosto('');
+        setDataAbastecimento('');
+
+        setIsModalOpen(false);
+
+        // fetchAbastecimentos();
+
+      }catch (error) {
+        console.error("Erro ao cadastrar abastecimento:", error);
+        toast.error("Erro ao cadastrar abastecimento.");  
+
+      }
+
+    }
+      
     useEffect(() => {
         const fetchAbastecimentos = async () => {
             try {
@@ -137,7 +199,7 @@ return (
 
         <AddButton
         disabled={isLoading}
-        onClick={() => toast.error("Função de adicionar ainda não implementada!")}
+        onClick={() => setIsModalOpen(true)}
         />
         </div>  
       </div>
@@ -148,7 +210,100 @@ return (
         <DataTable columns={colunas} data={abastecimentosFiltrados} />
       )}
     </div>
+      
+    <Modal
+    isOpen={isModalOpen}
+    onClose={() => setIsModalOpen(false)}
+    titulo="Cadastro de Abastecimento"
+    >
+      <form onSubmit={handleCadastrarAbastecimento}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <label style={{ fontSize: '0.85rem', color: '#374151', fontWeight: 500 }}>Placa *</label>
+              <input 
+                placeholder="ABC-1234" 
+                required 
+                value={placa}
+                onChange={(e) => setPlaca(e.target.value)} // <-- CONECTADO!
+                style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #D1D5DB' }} 
+              />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <label style={{ fontSize: '0.85rem', color: '#374151', fontWeight: 500 }}>Operador/Motorista *</label>
+              <input 
+                type="text" 
+                placeholder="Nome do motorista" 
+                required 
+                value={operador}
+                onChange={(e) => setOperador(e.target.value)} // <-- CONECTADO!
+                style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #D1D5DB' }} 
+              />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <label style={{ fontSize: '0.85rem', color: '#374151', fontWeight: 500 }}>KM Atual</label>
+              <input 
+                type="number" 
+                placeholder="Ex: 150000" 
+                value={km}
+                onChange={(e) => setKm(e.target.value)} // <-- CONECTADO!
+                style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #D1D5DB' }} 
+              />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <label style={{ fontSize: '0.85rem', color: '#374151', fontWeight: 500 }}>Posto *</label>
+              <input 
+                type="text" 
+                placeholder="Nome do Posto" 
+                required 
+                value={posto}
+                onChange={(e) => setPosto(e.target.value)} // <-- CONECTADO!
+                style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #D1D5DB' }} 
+              />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <label style={{ fontSize: '0.85rem', color: '#374151', fontWeight: 500 }}>Litros *</label>
+              <input 
+                type="number" 
+                step="0.01" 
+                placeholder="Ex: 50.00" 
+                required 
+                value={litros}
+                onChange={(e) => setLitros(e.target.value)} // <-- CONECTADO!
+                style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #D1D5DB' }} 
+              />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <label style={{ fontSize: '0.85rem', color: '#374151', fontWeight: 500 }}>Preço do Litro (R$) *</label>
+              <input 
+                type="number" 
+                step="0.01" 
+                placeholder="Ex: 5.99" 
+                required 
+                value={preco}
+                onChange={(e) => setPreco(e.target.value)} // <-- CONECTADO!
+                style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #D1D5DB' }} 
+              />
+            </div>
+
+        </div>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '2rem' }}>
+            <button type="button" onClick={() => setIsModalOpen(false)} /* estilos de cancelar */>
+              Cancelar
+            </button>
+            <button type="submit" /* estilos de salvar */>
+              Salvar Abastecimento
+            </button>
+          </div>
+      </form>
+    </Modal>
   </>
-  
+
   );
 };

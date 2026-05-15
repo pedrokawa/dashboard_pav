@@ -6,9 +6,9 @@ export interface Abastecimento {
     km: string;
     horimetro?: string;
     operador: string;
-    litros: string;
-    preco: string;
-    total: string;
+    litros: number;
+    preco: number;
+    total: number;
     posto: string;
     dataAbastecimento: string;
 }

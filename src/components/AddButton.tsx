@@ -13,7 +13,6 @@ export const AddButton = ({ onClick, text = 'Cadastrar', disabled = false}: AddB
             <Button 
             variant="contained" 
             color="primary"
-            startIcon={<AddIcon />}
             onClick={onClick}
             disabled={disabled}
             sx={{
@@ -32,6 +31,7 @@ export const AddButton = ({ onClick, text = 'Cadastrar', disabled = false}: AddB
             // }
             }}
             >
+            <AddIcon sx={{ marginRight: '0.5rem' }} />
             {text}
             </Button>
         </>
