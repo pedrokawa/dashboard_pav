@@ -7,6 +7,7 @@ import { Loading } from "../components/Loading";
 import { ExportButton } from "../components/ExportButton";
 import { exportToExcel } from "../utils/exportExcel";
 import { SearchBar } from "../components/SearchBar";
+import { AddButton } from "../components/AddButton";
 interface Abastecimento {
     id: number;
     placa: string;
@@ -133,6 +134,11 @@ return (
           exportToExcel(formatData, "Relatório de Abastecimentos");
 
         }} />
+
+        <AddButton
+        disabled={isLoading}
+        onClick={() => toast.error("Função de adicionar ainda não implementada!")}
+        />
         </div>  
       </div>
 
