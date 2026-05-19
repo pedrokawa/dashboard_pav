@@ -26,13 +26,28 @@ interface Abastecimento {
     foto?: string;
 }
 
-const arqvBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
+const uploadImage = async (file: File): Promise<string | undefined> => {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', 'abastecimentos_upload');
+  formData.append('cloud_name', 'dkrosnkyu');
+
+  try {
+
+    const response = await fetch("https://api.cloudinary.com/v1_1/dkrosnkyu/auto/upload", {
+      method: 'POST',
+      body: formData,
+    })
+
+    const data = await response.json();
+
+    return data.secure_url;
+
+  }catch (error) {
+    console.error("Erro ao fazer upload da imagem:", error);
+    toast.error("Erro ao fazer upload da imagem.");
+    return undefined;
+  }
 }
 
 export const RelAbasteci = () => {
@@ -80,10 +95,10 @@ export const RelAbasteci = () => {
 
       try {
         
-        let fotoBase64: string | undefined = undefined;
+        let linkNota: string | undefined = undefined;
 
         if (nfe) {
-          fotoBase64 = await arqvBase64(nfe);
+          linkNota = await uploadImage(nfe);
         }
 
       const valorTotal = parseFloat(litros) * parseFloat(preco);
@@ -100,7 +115,7 @@ export const RelAbasteci = () => {
         total: valorTotal,
         posto,
         dataAbastecimento: new Date(dataAbastecimento).toISOString(),
-        foto: fotoBase64
+        foto: linkNota
       }
        
       const novoAbast = await api.postAbast(dadosAbastecimento);
