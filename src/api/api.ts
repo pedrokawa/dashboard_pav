@@ -94,5 +94,21 @@ export const api = {
     }
 
     return await response.json();
+    },
+
+    getVeicPlaca: async (placa: string) => {
+        const placaLimpa = placa.trim().toUpperCase();
+        
+        const response = await fetch(`${BASE_URL}/api/veiculos/${placaLimpa}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        if (!response.ok){
+            return null;
+        }
+
+        return await response.json();   
     }
 }
