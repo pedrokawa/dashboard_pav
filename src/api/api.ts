@@ -11,6 +11,7 @@ export interface Abastecimento {
     total: number;
     posto: string;
     dataAbastecimento: string;
+    foto?: string;
 }
 
 export const api = {   

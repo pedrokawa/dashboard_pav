@@ -23,8 +23,17 @@ interface Abastecimento {
     total: string;
     posto: string;
     dataAbastecimento: string;
+    foto?: string;
 }
 
+const arqvBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+}
 
 export const RelAbasteci = () => {
 
@@ -69,6 +78,14 @@ export const RelAbasteci = () => {
     const handleCadastrarAbastecimento = async (e: React.FormEvent) => {
       e.preventDefault();
 
+      try {
+        
+        let fotoBase64: string | undefined = undefined;
+
+        if (nfe) {
+          fotoBase64 = await arqvBase64(nfe);
+        }
+
       const valorTotal = parseFloat(litros) * parseFloat(preco);
     
       const dadosAbastecimento = {
@@ -83,17 +100,17 @@ export const RelAbasteci = () => {
         total: valorTotal,
         posto,
         dataAbastecimento: new Date(dataAbastecimento).toISOString(),
+        foto: fotoBase64
       }
+       
+      const novoAbast = await api.postAbast(dadosAbastecimento);
 
-      try {
-
-        const novoAbast = await api.postAbast(dadosAbastecimento);
-
-        const dataFormatada = new Intl.DateTimeFormat('pt-BR', {
+      const dataFormatada = new Intl.DateTimeFormat('pt-BR', {
           day: '2-digit',
           month: '2-digit',
           year: 'numeric'
-        }).format(new Date(novoAbast.dataAbastecimento));
+      
+      }).format(new Date(novoAbast.dataAbastecimento));
 
         const abastecimentoFormatado = {
           ...novoAbast,
