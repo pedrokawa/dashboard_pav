@@ -340,8 +340,16 @@ return (
               <input 
                 placeholder="Marca" 
                 readOnly 
+                disabled
                 value={marca}
-                style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #D1D5DB', height: '1.2rem' }} 
+                style={{ 
+                  padding: '0.5rem', 
+                  borderRadius: '0.375rem', 
+                  border: '1px solid #D1D5DB', 
+                  height: '1.2rem', 
+                  backgroundColor: '#afb4b3', 
+                  fontWeight: 'bold',
+                  cursor: 'not-allowed' }} 
               />
             </div>
 
@@ -350,8 +358,16 @@ return (
               <input 
                 placeholder="Modelo" 
                 readOnly
+                disabled
                 value={modelo}
-                style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #D1D5DB', height: '1.2rem' }} 
+                style={{ 
+                  padding: '0.5rem', 
+                  borderRadius: '0.375rem', 
+                  border: '1px solid #D1D5DB', 
+                  height: '1.2rem', 
+                  backgroundColor: '#afb4b3', 
+                  fontWeight: 'bold', 
+                  cursor: 'not-allowed'}} 
               />
             </div>
 
@@ -385,7 +401,7 @@ return (
                 placeholder="Ex: 150000" 
                 value={horimetro}
                 onChange={(e) => setHorimetro(e.target.value)} // <-- CONECTADO!
-                style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #D1D5DB', height: '1.2rem' }} 
+                style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #D1D5DB', height: '1.2rem'}} 
               />
             </div>
 
@@ -425,7 +441,14 @@ return (
                 step="0.01" 
                 placeholder="Ex: 5.99" 
                 value={total}
-                style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #D1D5DB', backgroundColor: '#f3f4f633', cursor: 'not-allowed', height: '1.2rem' }} 
+                style={{ 
+                  padding: '0.5rem', 
+                  borderRadius: '0.375rem', 
+                  border: '1px solid #D1D5DB', 
+                  backgroundColor: '#afb4b3', 
+                  cursor: 'not-allowed', 
+                  height: '1.2rem', 
+                  fontWeight: 'bold' }} 
               />
             </div>
 
