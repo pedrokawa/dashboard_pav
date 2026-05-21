@@ -70,7 +70,7 @@ export const api = {
         return await response.json();
     },
 
-    postAbast: async ( dados: Abastecimento): Promise<Abastecimento> => {
+    postAbast: async ( dados: Omit<Abastecimento, 'id'>): Promise<Abastecimento> => {
       const response = await fetch(`${BASE_URL}/api/abastecimento`, {
         method: 'POST',
         headers: {

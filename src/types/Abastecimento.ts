@@ -1,4 +1,5 @@
 export interface Abastecimento {
+    id: number;
     placa: string;
     marca: string;
     modelo: string;
