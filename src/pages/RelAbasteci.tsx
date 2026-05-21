@@ -10,21 +10,8 @@ import { SearchBar } from "../components/SearchBar";
 import { AddButton } from "../components/AddButton";
 import { Modal } from "../components/Modal";
 import { Button } from "@mui/material";
-interface Abastecimento {
-    id: number;
-    placa: string;
-    marca: string;
-    modelo: string;
-    km: string;
-    horimetro?: string;
-    operador: string;
-    litros: string;
-    preco: string;
-    total: string;
-    posto: string;
-    dataAbastecimento: string;
-    foto?: string;
-}
+
+import { type Abastecimento } from "../types/Abastecimento";
 
 const uploadImage = async (file: File): Promise<string | undefined> => {
   const formData = new FormData();
@@ -137,19 +124,6 @@ export const RelAbasteci = () => {
         console.log(novoAbast);
         console.log(abastecimentoFormatado);
         
-        setPlaca('');
-        setMarca('');
-        setModelo('');
-        setKm('');
-        setHorimetro('');
-        setOperador('');
-        setLitros('');
-        setPreco('');
-        setTotal('');
-        setPosto('');
-        setDataAbastecimento('');
-        setNfe(null);
-
         closeModal();
 
         setAbastecimentos((prev) => [abastecimentoFormatado, ...prev])
