@@ -11,6 +11,7 @@ import { Modal } from "../components/Modal";
 
 import { type Veiculo } from "../types/Veiculo";
 import { Button } from "@mui/material";
+import { EditButton } from "../components/EditButton";
 
 export const RelVeiculos = () => {
 
@@ -123,7 +124,22 @@ export const RelVeiculos = () => {
             {row.status || 'Desconhecido'}
             </span>
         )
-        }
+        },
+         {
+           key: 'id',
+           label: 'Ações',
+           align: 'center',
+           render: (row: Veiculo) => (
+             <div style={{ 
+               display: 'flex', 
+               width: '100%', 
+               gap: '0.5rem', 
+               justifyContent: 'center' }}>
+               <EditButton 
+               onClick={() => (row.placa)} />
+             </div>
+           )
+         }       
   ];
 
   const veiculoFiltrado = frota.filter((item) => {

@@ -12,6 +12,7 @@ import { Modal } from "../components/Modal";
 import { Button } from "@mui/material";
 
 import { type Abastecimento } from "../types/Abastecimento";
+import { EditButton } from "../components/EditButton";
 
 const uploadImage = async (file: File): Promise<string | undefined> => {
   const formData = new FormData();
@@ -60,6 +61,10 @@ export const RelAbasteci = () => {
 
     const [nfe, setNfe] = useState<File | null>(null);
 
+    //edit
+    // const [, setEditId] = useState<number | null>(null);
+    const [urlNfe, ] = useState<string | undefined>(undefined);
+
     // fechar modal
     const closeModal = () => {
       setPlaca('');
@@ -82,10 +87,12 @@ export const RelAbasteci = () => {
 
       try {
         
-        let linkNota: string | undefined = undefined;
+        let linkNota = urlNfe;
 
         if (nfe) {
+          toast.loading("Enviando novo anexo para a nuvem...", { id: "upload-toast" });
           linkNota = await uploadImage(nfe);
+          toast.dismiss("upload-toast");
         }
 
       const valorTotal = parseFloat(litros) * parseFloat(preco);
@@ -104,7 +111,7 @@ export const RelAbasteci = () => {
         dataAbastecimento: new Date(dataAbastecimento).toISOString(),
         foto: linkNota
       }
-       
+
       const novoAbast = await api.postAbast(dadosAbastecimento);
 
       const dataFormatada = new Intl.DateTimeFormat('pt-BR', {
@@ -169,6 +176,27 @@ export const RelAbasteci = () => {
         setTotal('');
       }
     };
+
+    // const handleEditAbastecimento = (abast: Abastecimento) => {
+    //   setEditId(abast.id);
+    //   setUrlNfe(abast.foto);
+
+    //   setPlaca(abast.placa);
+    //   setMarca(abast.marca);
+    //   setModelo(abast.modelo);
+    //   setKm(abast.km);
+    //   setHorimetro(abast.horimetro || '');
+    //   setOperador(abast.operador);
+    //   setLitros(abast.litros.toString());
+    //   setPreco(abast.preco.toString());
+    //   setTotal(abast.total.toString());
+    //   setPosto(abast.posto);
+
+    //   if (abast.dataAbastecimento) {
+    //     setDataAbastecimento(new Date(abast.dataAbastecimento).toISOString().slice(0,16));  
+    //   }
+
+    // }
       
     useEffect(() => {
         const fetchAbastecimentos = async () => {
@@ -224,7 +252,21 @@ export const RelAbasteci = () => {
         // Formata como Moeda (R$)
         render: (row) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(row.total))
         },
-
+        {
+          key: 'id',
+          label: 'Ações',
+          align: 'center',
+          render: (row: Abastecimento) => (
+            <div style={{ 
+              display: 'flex', 
+              width: '100%', 
+              gap: '0.5rem', 
+              justifyContent: 'center' }}>
+              <EditButton 
+              onClick={() => (row.id)} />
+            </div>
+          )
+        }
         
     ];
 
