@@ -119,4 +119,40 @@ export const api = {
 
         return await response.json();
     },
+
+    //atualizações
+    putAbast: async (id: number, dados: Partial<Abastecimento>): Promise<Abastecimento> => {
+        const response = await fetch(`${BASE_URL}/api/abastecimento/${id}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dados),
+            });
+
+            if (!response.ok){
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message ||'Erro ao atualizar abastecimento.');
+            }
+            
+            return await response.json();
+    },
+
+    putVeic: async (id: number, dados: Partial<Veiculo>): Promise<Veiculo> => {
+        const response = await fetch(`${BASE_URL}/api/veiculos/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dados)
+        });
+
+        if (!response.ok){
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message ||'Erro ao atualizar veículo.');
+        }
+
+        return await response.json();
+    }
 }
