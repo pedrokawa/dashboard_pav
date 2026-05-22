@@ -154,5 +154,18 @@ export const api = {
         }
 
         return await response.json();
+    },
+
+    //delete
+    deleteAbast: async (id: number) => {
+        const response = await fetch(`${BASE_URL}/api/abastecimento/${id}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok){
+            throw new Error('Erro ao deletar abastecimento');
+        }
+
+        return response.json();
     }
 }
