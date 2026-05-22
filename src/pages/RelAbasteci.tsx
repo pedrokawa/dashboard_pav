@@ -10,9 +10,11 @@ import { SearchBar } from "../components/SearchBar";
 import { AddButton } from "../components/AddButton";
 import { Modal } from "../components/Modal";
 import { Button } from "@mui/material";
+import { EditButton } from "../components/EditButton";
+import { DeleteButton } from "../components/DeleteButton";
 
 import { type Abastecimento } from "../types/Abastecimento";
-import { EditButton } from "../components/EditButton";
+
 
 const uploadImage = async (file: File): Promise<string | undefined> => {
   const formData = new FormData();
@@ -64,6 +66,10 @@ export const RelAbasteci = () => {
     //edit
     const [editId, setEditId] = useState<number | null>(null);
     const [urlNfe, setUrlNfe ] = useState<string | undefined>(undefined);
+
+    //delete
+    const [isDeleteModal, setIsDeleteModal] = useState(false);
+    const [idDelete, setIdDelete] = useState<number | null>(null);
 
     // fechar modal
     const closeModal = () => {
@@ -224,6 +230,27 @@ export const RelAbasteci = () => {
       setIsModalOpen(true);
 
     }
+
+    const handleAbrirDelete = (id: number) => {
+      setIdDelete(id);
+      setIsDeleteModal(true);
+    }
+
+    const confirmDelete = async () => {
+      if (!idDelete) return;
+
+      try{
+        await api.deleteAbast(idDelete);
+        setAbastecimentos(prev => prev.filter(item => item.id !== idDelete));
+        toast.success("Abastecimento deletado com sucesso.");
+
+        setIsDeleteModal(false);
+        setIdDelete(null);
+      }catch (error) {
+        console.error(error);
+        toast.error("Erro ao deletar abastecimento.");
+      }
+    }
       
     useEffect(() => {
         const fetchAbastecimentos = async () => {
@@ -306,9 +333,12 @@ export const RelAbasteci = () => {
               display: 'flex', 
               width: '100%', 
               gap: '0.5rem', 
-              justifyContent: 'center' }}>
+              justifyContent: 'center'
+              }}>
               <EditButton 
               onClick={() => handleEditar(row)} />
+              <DeleteButton
+              onClick={() => handleAbrirDelete(row.id)} />
             </div>
           )
         }
@@ -634,6 +664,57 @@ return (
           </div>
       </form>
     </Modal>
+
+    <Modal
+      isOpen={isDeleteModal}
+      onClose={() => setIsDeleteModal(false)}
+      titulo="Excluir Abastecimento"
+      maxWidth="30%"
+    >
+      <div>
+        <p style={{ fontSize: '1.05rem', color: '#374151', margin: 0 }}>
+          Tem certeza que deseja excluir este abastecimento? 
+        </p>
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '2.5rem' }}>
+          <Button 
+            type="button" 
+            onClick={() => setIsDeleteModal(false)} 
+            style={{
+              textTransform: 'none',
+              borderRadius: '0.5rem',
+              fontWeight: 500,
+              backgroundColor: '#9CA3AF', // Cinza neutro para cancelar
+              color: '#ffffff',
+              width: '8rem',
+              height: '2.8rem',
+              fontSize: '1rem'
+            }}
+          >
+            Cancelar
+          </Button>
+          
+          <Button 
+            type="button"
+            onClick={confirmDelete}
+            style={{
+                textTransform: 'none',
+                borderRadius: '0.5rem',
+                fontWeight: 500,
+                backgroundColor: '#e67e22',
+                borderColor: '#E5E7EB',
+                color: '#ffffff',
+                width: '8rem',
+                height: '2.8rem',
+                fontSize: '1rem'
+            }}
+          >
+            Deletar
+          </Button>
+        </div>
+      </div>
+    </Modal>
+
   </>
 
   );

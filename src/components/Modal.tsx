@@ -5,9 +5,10 @@ interface ModalProps {
     onClose: () => void;
     titulo: string;
     children: ReactNode;
+    maxWidth?: string;
 }
 
-export const Modal = ({ isOpen, onClose, titulo, children }: ModalProps) => {
+export const Modal = ({ isOpen, onClose, titulo, children, maxWidth }: ModalProps) => {
     if (!isOpen) return null;
 
 return (
@@ -30,7 +31,7 @@ return (
         borderRadius: '0.75rem',
         padding: '1.5rem',
         width: '100%',
-        maxWidth: '800px',
+        maxWidth: maxWidth || '800px',
         height: 'fit-content', 
         maxHeight: '90vh',     
         overflowY: 'auto',
