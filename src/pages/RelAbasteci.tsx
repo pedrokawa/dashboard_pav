@@ -62,8 +62,8 @@ export const RelAbasteci = () => {
     const [nfe, setNfe] = useState<File | null>(null);
 
     //edit
-    // const [, setEditId] = useState<number | null>(null);
-    const [urlNfe, ] = useState<string | undefined>(undefined);
+    const [editId, setEditId] = useState<number | null>(null);
+    const [urlNfe, setUrlNfe ] = useState<string | undefined>(undefined);
 
     // fechar modal
     const closeModal = () => {
@@ -79,6 +79,8 @@ export const RelAbasteci = () => {
       setPosto('');
       setDataAbastecimento('');
       setNfe(null);
+      setEditId(null);
+
       setIsModalOpen(false);
     }
 
@@ -95,7 +97,9 @@ export const RelAbasteci = () => {
           toast.dismiss("upload-toast");
         }
 
-      const valorTotal = parseFloat(litros) * parseFloat(preco);
+      const numLitros = parseFloat(litros.toString().replace(',', '.'));
+      const numPreco = parseFloat(preco.toString().replace(',', '.'));
+      const numTotal = parseFloat(total.toString().replace(',', '.'));
     
       const dadosAbastecimento = {
         placa: placa.toUpperCase(),
@@ -104,37 +108,30 @@ export const RelAbasteci = () => {
         km: km || '0',
         horimetro: horimetro || '0',
         operador,
-        litros: parseFloat(litros),
-        preco: parseFloat(preco),
-        total: valorTotal,
+        litros: numLitros,
+        preco: numPreco,
+        total: numTotal,
         posto,
         dataAbastecimento: new Date(dataAbastecimento).toISOString(),
         foto: linkNota
       }
 
-      const novoAbast = await api.postAbast(dadosAbastecimento);
+      if (editId) {
+        const abastAtualizado = await api.putAbast(editId, dadosAbastecimento);
 
-      const dataFormatada = new Intl.DateTimeFormat('pt-BR', {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric'
-      
-      }).format(new Date(novoAbast.dataAbastecimento));
-
-        const abastecimentoFormatado = {
-          ...novoAbast,
-          dataAbastecimento: dataFormatada
-        };
+        setAbastecimentos(prev => prev.map(item => item.id === editId ? abastAtualizado : item));
+        toast.success("Abastecimento atualizado com sucesso!");
+        closeModal();
+        return;
+      } else {
+        
+        const novoAbast = await api.postAbast(dadosAbastecimento);
+        setAbastecimentos((prev) => [novoAbast, ...prev])
 
         toast.success("Abastecimento cadastrado com sucesso!");
-
-        console.log(novoAbast);
-        console.log(abastecimentoFormatado);
-        
+          
         closeModal();
-
-        setAbastecimentos((prev) => [abastecimentoFormatado, ...prev])
-        // fetchAbastecimentos();
+      }
 
       }catch (error) {
         console.error("Erro ao cadastrar abastecimento:", error);
@@ -177,26 +174,56 @@ export const RelAbasteci = () => {
       }
     };
 
-    // const handleEditAbastecimento = (abast: Abastecimento) => {
-    //   setEditId(abast.id);
-    //   setUrlNfe(abast.foto);
+    const handleEditar = (abast: Abastecimento) => {
 
-    //   setPlaca(abast.placa);
-    //   setMarca(abast.marca);
-    //   setModelo(abast.modelo);
-    //   setKm(abast.km);
-    //   setHorimetro(abast.horimetro || '');
-    //   setOperador(abast.operador);
-    //   setLitros(abast.litros.toString());
-    //   setPreco(abast.preco.toString());
-    //   setTotal(abast.total.toString());
-    //   setPosto(abast.posto);
+      setEditId(abast.id);
+      setUrlNfe(abast.foto);
 
-    //   if (abast.dataAbastecimento) {
-    //     setDataAbastecimento(new Date(abast.dataAbastecimento).toISOString().slice(0,16));  
-    //   }
+      setPlaca(abast.placa);
+      setMarca(abast.marca);
+      setModelo(abast.modelo);
+      setKm(abast.km);
 
-    // }
+      setHorimetro(abast.horimetro || '');
+      setOperador(abast.operador);
+
+      setLitros(abast.litros.toString());
+      setPreco(abast.preco.toString());
+      setTotal(abast.total.toString());
+      setPosto(abast.posto);
+      
+      setUrlNfe(abast.foto);
+
+      if (abast.dataAbastecimento) {
+        let dataFinalParaOInput = '';
+
+        if (abast.dataAbastecimento.includes('/')) {
+          // 1. Cai aqui se for uma data dos testes antigos: "20/05/2026"
+          const partes = abast.dataAbastecimento.split(' ');
+          const [dia, mes, ano] = partes[0].split('/');
+          const hora = partes[1] || '00:00'; // Põe meia-noite se não tiver hora
+          
+          dataFinalParaOInput = `${ano}-${mes}-${dia}T${hora}`;
+        } else {
+          // 2. Cai aqui se for do banco real (ISO): "2026-05-20T14:30:00.000Z"
+          const dataObj = new Date(abast.dataAbastecimento);
+          
+          if (!isNaN(dataObj.getTime())) {
+            // Essa matemática compensa o fuso horário brasileiro para o input não pular 3 horas
+            const tzOffset = dataObj.getTimezoneOffset() * 60000;
+            dataFinalParaOInput = new Date(dataObj.getTime() - tzOffset).toISOString().slice(0, 16);
+          }
+        }
+
+      // Entrega pro estado exatamente o que o input quer: YYYY-MM-DDThh:mm
+        setDataAbastecimento(dataFinalParaOInput);
+      } else {
+        setDataAbastecimento('');
+      }
+
+      setIsModalOpen(true);
+
+    }
       
     useEffect(() => {
         const fetchAbastecimentos = async () => {
@@ -215,16 +242,34 @@ export const RelAbasteci = () => {
         fetchAbastecimentos();
     }, []);
 
-
-
-
     const colunas: ColumnConfig<Abastecimento>[] = [
         { 
         key: 'dataAbastecimento', 
         label: 'Data', 
         align: 'left',
+          render: (row) => {
+              // 2. Se a data já vier com barra (fruto dos nossos testes antigos), 
+              // não tenta converter, só mostra ela direto para não quebrar a tela!
+              if (row.dataAbastecimento.includes('/')) {
+                  return row.dataAbastecimento;
+              }
+              // 3. Tenta formatar a data ISO que vem do banco de dados
+              try {
+                  return new Intl.DateTimeFormat('pt-BR', { 
+                      day: '2-digit', 
+                      month: '2-digit', 
+                      year: 'numeric' 
+                  }).format(new Date(row.dataAbastecimento));
+              } catch (error) {
+                  console.error("Erro ao formatar data:", error);
+                  return 'Data Inválida';
+              }
+          }
         },
-        { key: 'placa', label: 'Placa', align: 'left' },
+        { 
+        key: 'placa', 
+        label: 'Placa', 
+        align: 'left' },
         { 
         key: 'marca', 
         label: 'Marca/Modelo', 
@@ -263,7 +308,7 @@ export const RelAbasteci = () => {
               gap: '0.5rem', 
               justifyContent: 'center' }}>
               <EditButton 
-              onClick={() => (row.id)} />
+              onClick={() => handleEditar(row)} />
             </div>
           )
         }
@@ -334,20 +379,30 @@ return (
     <Modal
     isOpen={isModalOpen}
     onClose={closeModal}
-    titulo="Cadastro de Abastecimento"
+    titulo={editId ? "Editar Abastecimento" : "Cadastrar Abastecimento"}
     >
       <form onSubmit={handleCadastrarAbastecimento}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
               <label style={{ fontSize: '0.85rem', color: '#374151', fontWeight: 500 }}>Placa *</label>
-              <input 
-                placeholder="ABC-1234" 
+              <input
+                type="text"
+                placeholder="Ex: ABC-1234"
                 required 
                 value={placa}
-                onChange={(e) => setPlaca(e.target.value)}
+                onChange={(e) => setPlaca(e.target.value.toUpperCase())}
                 onBlur={handleBuscaPlaca}
-                style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #D1D5DB', height: '1.2rem' }} 
+                maxLength={8}
+                readOnly={editId !== null}
+                style={{ 
+                  padding: '0.5rem', 
+                  borderRadius: '0.375rem', 
+                  border: '1px solid #D1D5DB', 
+                  height: '1.2rem',
+                  backgroundColor: editId !== null ? '#afb4b3' : 'transparent',
+                  cursor: editId !== null ? 'not-allowed' : 'text',
+                }} 
               />
             </div>
 
@@ -464,7 +519,8 @@ return (
                   backgroundColor: '#afb4b3', 
                   cursor: 'not-allowed', 
                   height: '1.2rem', 
-                  fontWeight: 'bold' }} 
+                  fontWeight: 'bold',
+                }} 
               />
             </div>
 
@@ -495,11 +551,26 @@ return (
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
               <label style={{ fontSize: '0.85rem', color: '#374151', fontWeight: 500 }}>Nota Fiscal *</label>
-              
-              <input 
+
+              {editId !== null && urlNfe ? (
+                <span 
+                  style={{
+                    fontSize: '0.9rem',
+                    color: '#F59E0B', // O seu laranja
+                    fontWeight: 'bold',
+                    padding: '0.5rem 0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    height: '1.2rem'
+                  }}
+                >
+                  Arquivo já anexado.
+                </span>
+              ) : (
+                <>
+                <input 
                 type="file" 
-                placeholder="Arquivo da NF" 
-                required 
+                required={!urlNfe && !nfe} 
                 accept="image/*, .pdf"
                 onChange={(e) => {
                   if (e.target.files && e.target.files.length > 0) {
@@ -514,17 +585,14 @@ return (
                   height: '1.2rem',
                   color: '#374151'
                 }}  
-              />
-
-              {nfe && (
-                <span 
-                style={{
-                  fontSize: '0.85rem',
-                  color: '#10B981', 
-                  fontWeight: 500
-                }}>
-                  Arquivo anexado: {nfe.name}
-                </span>
+                />
+                  {nfe && (
+                    <span
+                    style={{ fontSize: '0.85rem', color: '#10B981', fontWeight: 500 }}>
+                      Arquivo selecionado: {nfe.name}
+                    </span>
+                  )}
+                </>
               )}
             </div>
 
@@ -556,12 +624,12 @@ return (
                 backgroundColor: '#e67e22',
                 borderColor: '#E5E7EB',
                 color: '#ffffff',
-                width: '9rem',
+                width: '10rem',
                 height: '2.8rem',
                 fontSize: '1rem'
                 }}
               >
-              Salvar
+              { editId ? 'Salvar alterações' : 'Cadastrar' }
             </Button>
           </div>
       </form>
