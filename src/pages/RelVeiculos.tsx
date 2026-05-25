@@ -26,12 +26,14 @@ export const RelVeiculos = () => {
     const [anoFabricacao, setAnoFabricacao] = useState('');
     const [anoModelo, setAnoModelo] = useState('');
     const [combustivel, setCombustivel] = useState('');
-    const [status, setStatus] = useState('');
+    const [status, setStatus] = useState('Ativo');
     const [renavam, setRenavam] = useState('');
     const [cor, setCor] = useState('');
     const [kmAtual, setKmAtual] = useState('');
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const [editId, setEditId] = useState<number | null>(null);
 
     const closeModal = () => {
         setPlaca('');
@@ -41,7 +43,7 @@ export const RelVeiculos = () => {
         setAnoFabricacao('');
         setAnoModelo('');
         setCombustivel('');
-        setStatus('');
+        setStatus('Ativo');
         setRenavam('');
         setCor('');
         setKmAtual('');
@@ -52,36 +54,81 @@ export const RelVeiculos = () => {
     const handleCadastrarVeiculo = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        const dadosVeiculo = {
+            placa: placa.trim().toUpperCase(),
+            marca: marca.trim(),
+            modelo: modelo.trim(),
+            codigoFrota: codigoFrota.trim().toUpperCase(),
+            anoFabricacao: Number(anoFabricacao) || 0,
+            anoModelo: Number(anoModelo) || 0,
+            combustivel: combustivel,
+            status: status,
+            renavam: renavam,
+            cor: cor,
+            kmAtual: Number(kmAtual) || 0,
+        };
+
         try {
-            const dadosVeiculo = {
-                placa: placa.trim().toUpperCase(),
-                marca: marca.trim(),
-                modelo: modelo.trim(),
-                codigoFrota: codigoFrota.trim().toUpperCase(),
-                anoFabricacao: Number(anoFabricacao) || 0,
-                anoModelo: Number(anoModelo) || 0,
-                combustivel: combustivel,
-                status: status,
-                renavam: renavam,
-                cor: cor,
-                kmAtual: Number(kmAtual) || 0,
-            };
 
-            const novoVeiculo = await api.postVeic(dadosVeiculo);
+            if (editId) {
+                const veicAtualizado = await api.putVeic(editId, dadosVeiculo);
 
-            toast.success('Veículo cadastrado com sucesso!');
+                setFrota((prev) => prev.map(item => item.id === editId ? veicAtualizado : item));
+                toast.success("Veículo atualizado com sucesso.");
+                closeModal();
+                return;
+            }else {
+                const novoVeic = await api.postVeic(dadosVeiculo);
+                toast.success('Veículo cadastrado com sucesso!');
+
+                setFrota((prev) => [novoVeic, ...prev])
+            }
 
             closeModal();
-
-            setFrota((prev) => [novoVeiculo, ...prev]);
-
 
         } catch (error) {
             console.error('Erro ao cadastrar veículo:', error);
             toast.error('Erro ao cadastrar veículo.');
         }
     }
+
+    const handleEditar = (veic: Veiculo) => {
+        setEditId(veic.id);
+
+        setPlaca(veic.placa);
+        setMarca(veic.marca);
+        setModelo(veic.modelo);
+        setCodigoFrota(veic.codigoFrota);
+        setAnoFabricacao(veic.anoFabricacao?.toString() || '');
+        setAnoModelo(veic.anoModelo?.toString() || '');
+        setCombustivel(veic.combustivel);
+        setStatus(veic.status);
+        setRenavam(veic.renavam);
+        setCor(veic.cor);
+        setKmAtual(veic.kmAtual?.toString() || '');
+
+        setIsModalOpen(true);
+    }
     
+    const handleNovoVeic = () => {
+        setEditId(null);
+
+        setPlaca('');
+        setMarca('');
+        setModelo('');
+        setCodigoFrota('');
+        setAnoFabricacao('');
+        setAnoModelo('');
+        setCombustivel('');
+        setStatus('Ativo');
+        setRenavam('');
+        setCor('');
+        setKmAtual('');
+
+        setIsModalOpen(true);
+
+    }
+   
     useEffect(() => {
         const fetchVeiculos = async () => {
             try {
@@ -103,27 +150,54 @@ export const RelVeiculos = () => {
         { key: 'codigoFrota', label: 'Cód. Frota', align: 'left' },
         { key: 'placa', label: 'Placa', align: 'left' },
         { 
-        key: 'modelo', 
-        label: 'Marca/Modelo',
-        align: 'left', 
-        // Um truque legal: juntar Marca e Modelo na mesma coluna para ficar mais limpo!
-        render: (row) => `${row.marca} ${row.modelo}` 
+            key: 'modelo', 
+            label: 'Marca/Modelo',
+            align: 'left', 
+            // Um truque legal: juntar Marca e Modelo na mesma coluna para ficar mais limpo!
+            render: (row) => `${row.marca} ${row.modelo}` 
         },
-        { key: 'anoModelo', label: 'Ano', align: 'left' },
-        { key: 'combustivel', label: 'Combustível', align: 'left' },
+        {
+            key: 'cor',
+            label: 'Cor',
+            align: 'left',
+        },
+        { 
+            key: 'anoModelo', 
+            label: 'Fabricação/Ano', 
+            align: 'left',
+            render: (row) => `${row.anoFabricacao}/${row.anoModelo}` 
+        },
+        {
+            key: 'renavam',
+            label: 'Renavam',
+            align: 'left',
+        },
+        { 
+            key: 'combustivel', 
+            label: 'Combustível', 
+            align: 'left' },
         { 
         key: 'status', 
         label: 'Status', 
         align: 'left',
-        render: (row) => (
-            <span style={{
-            padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.85rem', fontWeight: '500',
-            backgroundColor: row.status?.toLowerCase() === 'ativo' || row.status?.toLowerCase() === 'inativo' ? '#D1FAE5' : '#FEE2E2',
-            color: row.status?.toLowerCase() === 'ativo' || row.status?.toLowerCase() === 'inativo' ? '#065F46' : '#991B1B'
-            }}>
-            {row.status || 'Desconhecido'}
-            </span>
-        )
+        render: (row) => {
+
+            const isAtivo = row.status?.toLowerCase() === 'ativo';
+
+            return (                
+                <span 
+                style={{
+                padding: '0.25rem 0.75rem', 
+                borderRadius: '9999px', 
+                fontSize: '0.85rem', 
+                fontWeight: '500',
+                backgroundColor: isAtivo ? '#D1FAE5' : '#FEE2E2',
+                color: isAtivo ? '#065F46' : '#991B1B'
+                }}>
+                {row.status || 'Desconhecido'}
+                </span>
+            )
+        }
         },
          {
            key: 'id',
@@ -136,7 +210,7 @@ export const RelVeiculos = () => {
                gap: '0.5rem', 
                justifyContent: 'center' }}>
                <EditButton 
-               onClick={() => (row.placa)} />
+               onClick={() => handleEditar(row)} />
              </div>
            )
          }       
@@ -189,7 +263,7 @@ export const RelVeiculos = () => {
 
             <AddButton 
             disabled={isLoading}
-            onClick={() => setIsModalOpen(true)} 
+            onClick={handleNovoVeic} 
             />
             </div>    
         </div>
@@ -204,7 +278,7 @@ export const RelVeiculos = () => {
     <Modal
     isOpen={isModalOpen}
     onClose={closeModal}
-    titulo="Cadastro de Veículo"
+    titulo={editId ? "Editar Veículo" : "Cadastrar Veículo"}
     >
         <form onSubmit={handleCadastrarVeiculo}>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.5rem' }}>
@@ -339,14 +413,53 @@ export const RelVeiculos = () => {
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                 <label style={{ fontSize: '0.85rem', color: '#374151', fontWeight: 500 }}>Status *</label>
-                <input 
-                    type="text" 
-                    placeholder="Ex: Ativo/Inativo" 
-                    required 
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)} 
-                    style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #D1D5DB', height: '1.2rem' }}  
-                />
+                    <div style={{ 
+                        display: 'flex', 
+                        flexDirection: 'row', 
+                        alignItems: 'center', 
+                        gap: '0.75rem', 
+                        height: '2.2rem' // Mesma altura visual dos seus inputs
+                    }}>
+                        <button
+                        type="button"
+                        onClick={() => setStatus(status === 'Ativo' ? 'Inativo' : 'Ativo')}
+                        style={{
+                            width: '54px',
+                            height: '28px',
+                            borderRadius: '14px',
+                            backgroundColor: status === 'Ativo' ? '#10B981' : '#EF4444', 
+                            border: 'none',
+                            position: 'relative',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.3s ease',
+                            padding: 0,
+                            flexShrink: 0
+                        }}
+                        >
+                        {/* A bolinha branca do switch */}
+                        <div 
+                            style={{
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '50%',
+                            backgroundColor: '#ffffff',
+                            position: 'absolute',
+                            top: '2px',
+                            left: status === 'Ativo' ? '28px' : '2px',
+                            transition: 'left 0.3s ease',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                            }} 
+                        />
+                        </button>
+                        <span style={{ 
+                        fontWeight: 600, 
+                        fontSize: '0.95rem',
+                        color: status === 'Ativo' ? '#10B981' : '#EF4444',
+                        transition: 'color 0.3s ease'
+                        }}>
+                        {status}
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -376,12 +489,12 @@ export const RelVeiculos = () => {
                     backgroundColor: '#e67e22',
                     borderColor: '#E5E7EB',
                     color: '#ffffff',
-                    width: '9rem',
+                    width: '11rem',
                     height: '2.8rem',
                     fontSize: '1rem'
                     }}
                 >
-                Salvar
+                { editId ? "Salvar alterações" : "Cadastrar" }
                 </Button>
             </div>
         </form>
