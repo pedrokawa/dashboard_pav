@@ -231,6 +231,27 @@ export const RelAbasteci = () => {
 
     }
 
+    const handleNovoAbast = () => {
+      setEditId(null);
+      setUrlNfe(undefined);
+      setNfe(null);
+      
+      setPlaca('');
+      setMarca('');
+      setModelo('');
+      setKm('');
+      setHorimetro('');
+      setOperador('');
+      setLitros('');
+      setPreco('');
+      setTotal('');
+      setPosto('');
+      setDataAbastecimento('');
+
+      setIsModalOpen(true); // Abre com a casa limpa!
+     
+    }
+
     const handleAbrirDelete = (id: number) => {
       setIdDelete(id);
       setIsDeleteModal(true);
@@ -394,7 +415,7 @@ return (
 
         <AddButton
         disabled={isLoading}
-        onClick={() => setIsModalOpen(true)}
+        onClick={handleNovoAbast}
         />
         </div>  
       </div>
