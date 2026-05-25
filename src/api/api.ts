@@ -103,7 +103,7 @@ export const api = {
         return await response.json();   
     },
 
-    postVeic: async (dados: Veiculo): Promise<Veiculo> => {
+    postVeic: async (dados: Omit<Veiculo, 'id'>): Promise<Veiculo> => {
         const response = await fetch(`${BASE_URL}/api/veiculos`, {
             method: 'POST',
             headers: {
