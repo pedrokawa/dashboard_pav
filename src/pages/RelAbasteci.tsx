@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import { api } from "../api/api";
 import { DataTable, type ColumnConfig } from "../components/DataTable";
 // import { dateFormat } from '../utils/dateFormat';
@@ -12,6 +12,7 @@ import { Modal } from "../components/Modal";
 import { Button } from "@mui/material";
 import { EditButton } from "../components/EditButton";
 import { DeleteButton } from "../components/DeleteButton";
+import { Toast } from "../components/Toast";
 
 import { type Abastecimento } from "../types/Abastecimento";
 
@@ -35,7 +36,7 @@ const uploadImage = async (file: File): Promise<string | undefined> => {
 
   }catch (error) {
     console.error("Erro ao fazer upload da imagem:", error);
-    toast.error("Erro ao fazer upload da imagem.");
+    Toast.error("Erro ao fazer upload da imagem.");
     return undefined;
   }
 }
@@ -93,14 +94,16 @@ export const RelAbasteci = () => {
     const handleCadastrarAbastecimento = async (e: React.FormEvent) => {
       e.preventDefault();
 
+      let loadingId;
+
       try {
         
         let linkNota = urlNfe;
 
         if (nfe) {
-          toast.loading("Enviando novo anexo para a nuvem...", { id: "upload-toast" });
+          loadingId = Toast.loading("Enviando novo anexo para a nuvem...");
           linkNota = await uploadImage(nfe);
-          toast.dismiss("upload-toast");
+          Toast.dismiss(loadingId);
         }
 
       const numLitros = parseFloat(litros.toString().replace(',', '.'));
@@ -126,7 +129,7 @@ export const RelAbasteci = () => {
         const abastAtualizado = await api.putAbast(editId, dadosAbastecimento);
 
         setAbastecimentos(prev => prev.map(item => item.id === editId ? abastAtualizado : item));
-        toast.success("Abastecimento atualizado com sucesso!");
+        Toast.success("Abastecimento atualizado com sucesso!");
         closeModal();
         return;
       } else {
@@ -134,14 +137,15 @@ export const RelAbasteci = () => {
         const novoAbast = await api.postAbast(dadosAbastecimento);
         setAbastecimentos((prev) => [novoAbast, ...prev])
 
-        toast.success("Abastecimento cadastrado com sucesso!");
+        Toast.success("Abastecimento cadastrado com sucesso!");
           
         closeModal();
       }
 
       }catch (error) {
+        if(loadingId) Toast.dismiss(loadingId);
         console.error("Erro ao cadastrar abastecimento:", error);
-        toast.error("Erro ao cadastrar abastecimento.");  
+        Toast.error("Erro ao cadastrar abastecimento.");  
 
       }
 
@@ -159,12 +163,12 @@ export const RelAbasteci = () => {
         } else {
           setMarca('');
           setModelo('');
-          toast.error("Digite uma placa válida.");
+          Toast.error("Digite uma placa válida.");
         }
         }
         catch (error) {
           console.error("Erro ao buscar veículo:", error);
-          toast.error("Erro ao buscar veículo.");
+          Toast.error("Erro ao buscar veículo.");
         }
     }
 
@@ -263,13 +267,13 @@ export const RelAbasteci = () => {
       try{
         await api.deleteAbast(idDelete);
         setAbastecimentos(prev => prev.filter(item => item.id !== idDelete));
-        toast.success("Abastecimento deletado com sucesso.");
+        Toast.success("Abastecimento deletado com sucesso.");
 
         setIsDeleteModal(false);
         setIdDelete(null);
       }catch (error) {
         console.error(error);
-        toast.error("Erro ao deletar abastecimento.");
+        Toast.error("Erro ao deletar abastecimento.");
       }
     }
       
@@ -281,7 +285,7 @@ export const RelAbasteci = () => {
                 setAbastecimentos(dados);
             } catch (error) {
                 console.error("Erro ao buscar abastecimentos:", error);
-                toast.error("Erro ao buscar abastecimentos.");
+                Toast.error("Erro ao buscar abastecimentos.");
             } finally {
                 setIsLoading(false);
             }

@@ -1,6 +1,6 @@
 import { DataTable, type ColumnConfig } from "../components/DataTable";
 import { useState, useEffect } from "react";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import { api } from "../api/api";
 import { Loading } from "../components/Loading";
 import { ExportButton } from "../components/ExportButton";
@@ -12,6 +12,7 @@ import { Modal } from "../components/Modal";
 import { type Veiculo } from "../types/Veiculo";
 import { Button } from "@mui/material";
 import { EditButton } from "../components/EditButton";
+import { Toast } from "../components/Toast";
 
 export const RelVeiculos = () => {
 
@@ -74,12 +75,12 @@ export const RelVeiculos = () => {
                 const veicAtualizado = await api.putVeic(editId, dadosVeiculo);
 
                 setFrota((prev) => prev.map(item => item.id === editId ? veicAtualizado : item));
-                toast.success("Veículo atualizado com sucesso.");
+                Toast.success("Veículo atualizado com sucesso.");
                 closeModal();
                 return;
             }else {
                 const novoVeic = await api.postVeic(dadosVeiculo);
-                toast.success('Veículo cadastrado com sucesso!');
+                Toast.success('Veículo cadastrado com sucesso!');
 
                 setFrota((prev) => [novoVeic, ...prev])
             }
@@ -88,7 +89,7 @@ export const RelVeiculos = () => {
 
         } catch (error) {
             console.error('Erro ao cadastrar veículo:', error);
-            toast.error('Erro ao cadastrar veículo.');
+            Toast.error('Erro ao cadastrar veículo.');
         }
     }
 
@@ -137,7 +138,7 @@ export const RelVeiculos = () => {
                 setFrota(data);
             } catch (error) {
                 console.error('Erro ao buscar veículos:', error);
-                toast.error('Erro ao buscar veículos.');
+                Toast.error('Erro ao buscar veículos.');
             } finally {
                 setIsLoading(false);
             }
