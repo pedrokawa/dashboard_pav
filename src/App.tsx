@@ -9,7 +9,7 @@ import { Config } from './pages/Config';
 import { RelVeiculos } from './pages/RelVeiculos';
 import { RelAbasteci } from './pages/RelAbasteci';
 import { RelDp } from './pages/RelDp';
-import { Medicao } from './pages/Medicao'
+import { RelMedicao } from './pages/RelMedicao'
 import { Terceiros } from './pages/Terceiros';
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
             <Route path="relatorios/veiculos" element={<RelVeiculos />} />
             <Route path="relatorios/abastecimentos" element={<RelAbasteci/>} />
             <Route path="relatorios/dp" element={<RelDp />} />
-            <Route path="medicao" element={<Medicao />} />
+            <Route path="medicao" element={<RelMedicao />} />
             <Route path="configuracoes" element={<Config />} />
             <Route path="terceiros" element={<Terceiros />} />
           </Route>
