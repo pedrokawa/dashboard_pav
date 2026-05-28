@@ -1,5 +1,6 @@
 import { type Abastecimento } from "../types/Abastecimento";
 import { type Veiculo } from "../types/Veiculo";
+import { type Medicao } from "../types/Medicao";
 
 const BASE_URL = import.meta.env.VITE_API_URL;   
 
@@ -22,6 +23,7 @@ export const api = {
         return await response.json();
     },
 
+    //GET
     getVeiculos: async (): Promise<Veiculo[]> => {
         const response = await fetch(`${BASE_URL}/api/veiculos`, {
             method: 'GET',
@@ -70,6 +72,39 @@ export const api = {
         return await response.json();
     },
 
+    getVeicPlaca: async (placa: string): Promise<Veiculo | null>  => {
+        const placaLimpa = placa.trim().toUpperCase();
+        
+        const response = await fetch(`${BASE_URL}/api/veiculos/${placaLimpa}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        if (!response.ok){
+            return null;
+        }
+
+        return await response.json();   
+    },
+
+    getMedicao: async (): Promise<Medicao[]> => {
+        const response = await fetch(`${BASE_URL}/api/medicao`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if(!response.ok) {
+           const errorData = await response.json().catch(() => ({}))
+           throw new Error(errorData.message || 'Erro ao buscar medições.');
+        }
+
+        return await response.json();
+    },
+
+    //POST
     postAbast: async ( dados: Omit<Abastecimento, 'id'>): Promise<Abastecimento> => {
       const response = await fetch(`${BASE_URL}/api/abastecimento`, {
         method: 'POST',
@@ -85,22 +120,6 @@ export const api = {
     }
 
     return await response.json();
-    },
-
-    getVeicPlaca: async (placa: string): Promise<Veiculo | null>  => {
-        const placaLimpa = placa.trim().toUpperCase();
-        
-        const response = await fetch(`${BASE_URL}/api/veiculos/${placaLimpa}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        });
-        if (!response.ok){
-            return null;
-        }
-
-        return await response.json();   
     },
 
     postVeic: async (dados: Omit<Veiculo, 'id'>): Promise<Veiculo> => {
@@ -120,7 +139,7 @@ export const api = {
         return await response.json();
     },
 
-    //atualizações
+    //PUT
     putAbast: async (id: number, dados: Partial<Abastecimento>): Promise<Abastecimento> => {
         const response = await fetch(`${BASE_URL}/api/abastecimento/${id}`,
             {
