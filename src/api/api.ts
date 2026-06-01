@@ -175,6 +175,24 @@ export const api = {
         return await response.json();
     },
 
+    putMedicao: async (id: number, dados: Partial<Medicao>): Promise<Medicao> => {
+        const response = await fetch(`${BASE_URL}/api/medicao/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            
+            body: JSON.stringify(dados)
+        });
+
+        if (!response.ok){
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message ||'Erro ao atualizar medição.');
+        }
+        
+        return await response.json();
+    },
+
     //delete
     deleteAbast: async (id: number) => {
         const response = await fetch(`${BASE_URL}/api/abastecimento/${id}`, {
