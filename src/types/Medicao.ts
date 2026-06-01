@@ -1,4 +1,5 @@
 export interface Medicao {
+    id: number;
     dataMedicao: string;
     apontador: string;
     rodovia: string;
