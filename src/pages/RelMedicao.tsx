@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 
 import { Tabs, type TabItem } from '../components/Tabs';
 import { DataTable, type ColumnConfig } from '../components/DataTable';
-// import { Button } from '@mui/material';
-// import { Modal } from '../components/Modal';
+import { Modal } from '../components/Modal';
 // import { DatePicker } from '../components/DatePicker';
 import { Loading } from '../components/Loading';
+import { EditButton } from '../components/EditButton';
+import { GalleryButton } from '../components/GalleryButton';
+import { Toast } from '../components/Toast'
 // import { SearchBar } from '../components/SearchBar';
 
 // import * as xlsx from 'xlsx';
@@ -17,6 +19,11 @@ export const RelMedicao = () => {
 
   const [medicao, setMedicao] = useState<Medicao[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  //galeria de fotos
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [imageGallery, setImageGallery] = useState<string[]>([])
+  const [imageAtualIdx, setImageAtualIdx] = useState(0);
 
   useEffect(() => {
     const fetchMedicao = async () => {
@@ -34,6 +41,38 @@ export const RelMedicao = () => {
     };
     fetchMedicao();
   }, []);
+
+  const openGallery = (fotos?: string | string[]) => {
+    if (!fotos || fotos.length === 0) {
+      Toast.error("Nenhuma foto disponível para medição.");
+      return;
+    }
+
+    let fotosArray: string[] = [];
+
+    if (typeof fotos === 'string') {
+      try {
+        fotosArray = JSON.parse(fotos);
+      } catch (error) {
+        console.log(error);
+        fotosArray = [fotos];
+      }
+    } else if (Array.isArray(fotos)) {
+      fotosArray = fotos;
+    }
+
+    setImageGallery(fotosArray);
+    setImageAtualIdx(0); // Começa sempre na primeira foto
+    setIsGalleryOpen(true);
+  }
+
+  const nextFoto = () => {
+    setImageAtualIdx((prev) => (prev + 1) % imageGallery.length);
+  };
+
+  const prevFoto = () => {
+    setImageAtualIdx((prev) => (prev - 1 + imageGallery.length) % imageGallery.length);
+  };
 
   const colunas: ColumnConfig<Medicao>[] = [
     {
@@ -68,12 +107,12 @@ export const RelMedicao = () => {
     },
     {
       key: 'extensao',
-      label: 'Extensão',
+      label: 'Extensão (m)',
       align: 'left',
     },
     {
       key: 'largura',
-      label: 'Largura',
+      label: 'Largura (m)',
       align: 'left',
     },
     {
@@ -91,11 +130,33 @@ export const RelMedicao = () => {
       label: 'Observações',
       align: 'left',
     },
-    // {
-    //   key: 'foto',
-    //   label: 'Fotos',
-    //   align: 'left',
-    // },
+    {
+      key: 'acoes',
+      label: 'Mais',
+      align: 'left',
+      render: (row: Medicao) => (
+        <div
+        style={{ 
+          display: 'flex', 
+          gap: '0.5rem', 
+          justifyContent: 'center' 
+        }}
+        >
+          <GalleryButton
+          onClick={() => {
+            openGallery(row.foto)
+          }} />
+
+          <EditButton
+          onClick={() => {
+            console.log("editar medição:", row.id);
+          }}>
+
+          </EditButton>
+
+        </div>
+      )
+    },
   ]
   // const [termoBusca, setTermoBusca] = useState('');
   // const [dataFiltro, setDataFiltro] = useState('');
@@ -207,6 +268,75 @@ export const RelMedicao = () => {
       </div>
 
     </div>  
+
+    <Modal
+    isOpen={isGalleryOpen}
+    onClose={() => setIsGalleryOpen(false)}
+    titulo="Fotos da Medição"
+    maxWidth="700px"
+    >
+
+        {imageGallery.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', padding: '1rem 0' }}>
+            
+            {/* CONTAINER DA IMAGEM E SETAS */}
+            <div style={{ 
+              position: 'relative', 
+              width: '100%', 
+              height: '60vh', 
+              minHeight: '300px',
+              backgroundColor: '#1F2937', // Fundo escuro igual de galerias reais
+              borderRadius: '8px', 
+              display: 'flex', 
+              justifyContent: 'center', 
+              alignItems: 'center', 
+              overflow: 'hidden' 
+            }}>
+              <img 
+                src={imageGallery[imageAtualIdx]} 
+                alt={`Registro ${imageAtualIdx + 1}`} 
+                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} 
+              />
+
+              {/* Só mostra as setas se tiver mais de 1 foto */}
+              {imageGallery.length > 1 && (
+                <>
+                  <button 
+                    onClick={prevFoto} 
+                    style={{ 
+                      position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', 
+                      background: 'rgba(0,0,0,0.6)', color: '#fff', border: 'none', borderRadius: '50%', 
+                      width: '45px', height: '45px', cursor: 'pointer', fontSize: '1.5rem',
+                      display: 'flex', justifyContent: 'center', alignItems: 'center'
+                    }}
+                  >
+                    &#10094;
+                  </button>
+                  <button 
+                    onClick={nextFoto} 
+                    style={{ 
+                      position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', 
+                      background: 'rgba(0,0,0,0.6)', color: '#fff', border: 'none', borderRadius: '50%', 
+                      width: '45px', height: '45px', cursor: 'pointer', fontSize: '1.5rem',
+                      display: 'flex', justifyContent: 'center', alignItems: 'center'
+                    }}
+                  >
+                    &#10095;
+                  </button>
+                </>
+              )}
+            </div>
+
+            {/* CONTADOR */}
+            <p style={{ margin: 0, color: '#4B5563', fontWeight: 500 }}>
+              Foto {imageAtualIdx + 1} de {imageGallery.length}
+            </p>
+          </div>
+        )}
+
+    </Modal>
+
+
 
   </>
   );
