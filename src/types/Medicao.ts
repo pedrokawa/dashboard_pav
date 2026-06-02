@@ -8,6 +8,7 @@ export interface Medicao {
     kmFim: number;
     extensao: number;
     largura: number;
+    espessura: number;
     faixa: string;
     areaTotal: number;
     observacoes: string;

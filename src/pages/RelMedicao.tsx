@@ -8,6 +8,7 @@ import { Loading } from '../components/Loading';
 import { EditButton } from '../components/EditButton';
 import { GalleryButton } from '../components/GalleryButton';
 import { Toast } from '../components/Toast'
+import { Button } from '@mui/material';
 // import { SearchBar } from '../components/SearchBar';
 
 // import * as xlsx from 'xlsx';
@@ -24,6 +25,10 @@ export const RelMedicao = () => {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [imageGallery, setImageGallery] = useState<string[]>([])
   const [imageAtualIdx, setImageAtualIdx] = useState(0);
+
+  //edicao
+  const [isEditModal, setIsEditModal] = useState(false);
+  const [medicaoEdit, setMedicaoEdit] = useState<Medicao | null>(null);
 
   useEffect(() => {
     const fetchMedicao = async () => {
@@ -74,11 +79,56 @@ export const RelMedicao = () => {
     setImageAtualIdx((prev) => (prev - 1 + imageGallery.length) % imageGallery.length);
   };
 
+  const openEditModal = (medicao: Medicao) => {
+    setMedicaoEdit(medicao);
+    setIsEditModal(true);
+  };
+
+  const handleEdit = async () => {
+    if(!medicaoEdit) return;
+
+    try {
+      const medicaoAtualizada = await api.putMedicao(medicaoEdit.id, medicaoEdit);
+      
+      setMedicao((prev) => prev.map((item) => item.id === medicaoEdit.id ? medicaoAtualizada : item));
+      Toast.success("Medição atualizada com sucesso!");
+      setIsEditModal(false);
+      setMedicaoEdit(null);
+    } catch (error) {
+      console.error("Erro ao atualizar medição:", error);
+      Toast.error("Erro ao atualizar medição. Tente novamente.");
+    }
+  };
+
+  const handleInputChange = (field: keyof Medicao, value: string | number) => {
+    if (medicaoEdit) {
+      setMedicaoEdit({
+        ...medicaoEdit,
+        [field]: value
+      });
+    }
+  };
+
   const colunas: ColumnConfig<Medicao>[] = [
     {
       key: 'dataMedicao',
       label: 'Data',
       align: 'left',
+      render: (row) => {
+        if (row.dataMedicao.includes('/')) {
+          return row.dataMedicao; // Já está no formato correto
+        }
+        try {
+          return new Intl.DateTimeFormat('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          }).format(new Date(row.dataMedicao));
+        } catch (error) {
+          console.error("Erro ao formatar data:", error);
+          return 'Data Inválida';
+          }
+      }
     },
     {
       key: 'apontador',
@@ -107,12 +157,17 @@ export const RelMedicao = () => {
     },
     {
       key: 'extensao',
-      label: 'Extensão (m)',
+      label: 'Extensão',
       align: 'left',
     },
     {
       key: 'largura',
-      label: 'Largura (m)',
+      label: 'Largura',
+      align: 'left',
+    },
+    {
+      key: 'espessura',
+      label: 'Espessura',
       align: 'left',
     },
     {
@@ -122,7 +177,7 @@ export const RelMedicao = () => {
     },
     {
       key: 'areaTotal',
-      label: 'Área (m²)',
+      label: 'Área',
       align: 'left',
     },
     {
@@ -149,7 +204,7 @@ export const RelMedicao = () => {
 
           <EditButton
           onClick={() => {
-            console.log("editar medição:", row.id);
+            openEditModal(row);
           }}>
 
           </EditButton>
@@ -285,7 +340,7 @@ export const RelMedicao = () => {
               width: '100%', 
               height: '60vh', 
               minHeight: '300px',
-              backgroundColor: '#1F2937', // Fundo escuro igual de galerias reais
+              backgroundColor: 'transparent', // Fundo escuro igual de galerias reais
               borderRadius: '8px', 
               display: 'flex', 
               justifyContent: 'center', 
@@ -336,7 +391,191 @@ export const RelMedicao = () => {
 
     </Modal>
 
+    {/* MODAL DE EDIÇÃO */}
+      <Modal
+        isOpen={isEditModal}
+        onClose={() => setIsEditModal(false)}
+        titulo="Editar Medição"
+        maxWidth="600px"
+      >
+        {medicaoEdit && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+            
+          <div style={{ display: 'flex', gap: '1rem' }}>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Data da Medição</label>
+                <input 
+                  type="text" 
+                  readOnly  
+                  value={medicaoEdit.dataMedicao && medicaoEdit.dataMedicao.includes('T') ? 
+                    medicaoEdit.dataMedicao.split('T')[0].split('-').reverse().join('/') : medicaoEdit.dataMedicao || ''} 
+                  style={{ 
+                    padding: '0.5rem', 
+                    borderRadius: '4px', 
+                    border: '1px solid #D1D5DB', 
+                    backgroundColor: '#e5e7eb', 
+                    cursor: 'not-allowed' }}
+                />
+              </div>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Apontador</label>
+                <input 
+                  type="text" 
+                  value={medicaoEdit.apontador || ''} 
+                  onChange={(e) => handleInputChange('apontador', e.target.value)}
+                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                />
+              </div>
+            </div>
 
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Rodovia</label>
+                <input 
+                  type="text" 
+                  value={medicaoEdit.rodovia || ''} 
+                  onChange={(e) => handleInputChange('rodovia', e.target.value)}
+                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                />
+              </div>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Sentido</label>
+                <input 
+                  type="text" 
+                  placeholder="S/N DIR ESQ"
+                  value={medicaoEdit.sentido || ''} 
+                  onChange={(e) => handleInputChange('sentido', e.target.value)}
+                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                />
+              </div>
+              
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Faixa</label>
+                <input 
+                  type="text"
+                  placeholder="1/2/3 ACOST"
+                  value={medicaoEdit.faixa || ''} 
+                  onChange={(e) => handleInputChange('faixa', e.target.value)}
+                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Km Inicial</label>
+                <input 
+                  type="text" 
+                  value={medicaoEdit.kmIni || ''} 
+                  onChange={(e) => handleInputChange('kmIni', e.target.value)}
+                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                />
+              </div>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Km Final</label>
+                <input 
+                  type="text" 
+                  value={medicaoEdit.kmFim || ''} 
+                  onChange={(e) => handleInputChange('kmFim', e.target.value)}
+                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                />
+              </div>
+
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Extensão (m)</label>
+                <input 
+                  type="text" 
+                  value={medicaoEdit.extensao || ''} 
+                  onChange={(e) => handleInputChange('extensao', e.target.value)}
+                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Largura</label>
+                <input 
+                  type="text" 
+                  value={medicaoEdit.largura || ''} 
+                  onChange={(e) => handleInputChange('largura', e.target.value)}
+                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                />
+              </div>
+
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Espessura</label>
+                <input 
+                  type="text"
+                  placeholder="1/2/3 ACOST"
+                  value={medicaoEdit.espessura || ''} 
+                  onChange={(e) => handleInputChange('espessura', e.target.value)}
+                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                />
+              </div>
+
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Área Total (m²)</label>
+                <input 
+                  type="text" 
+                  value={medicaoEdit.areaTotal || ''} 
+                  onChange={(e) => handleInputChange('areaTotal', e.target.value)}
+                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Observações</label>
+                <textarea 
+                  placeholder="Usina/Espessura/Camada"
+                  value={medicaoEdit.observacoes || ''} 
+                  onChange={(e) => handleInputChange('observacoes', e.target.value)}
+                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB', fontFamily: 'inherit' }}
+                />
+            </div>
+            {/* BOTÕES DE AÇÃO */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem' }}>
+              <Button 
+                variant="outlined" 
+                color="inherit" 
+                style={{ 
+                  textTransform: 'none',
+                  borderRadius: '0.5rem',
+                  fontWeight: 500,
+                  backgroundColor: '#e67e22',
+                  borderColor: '#E5E7EB',
+                  color: '#ffffff',
+                  width: '9rem',
+                  height: '2.8rem',
+                  fontSize: '1rem'
+                 }}                 
+                onClick={() => setIsEditModal(false)}
+              >
+                Cancelar
+              </Button>
+              <Button 
+                variant="contained" 
+                style={{ 
+                  textTransform: 'none',
+                  borderRadius: '0.5rem',
+                  fontWeight: 500,
+                  backgroundColor: '#e67e22',
+                  borderColor: '#E5E7EB',
+                  color: '#ffffff',
+                  width: '11rem',
+                  height: '2.8rem',
+                  fontSize: '1rem'
+                 }} 
+                onClick={handleEdit}
+              >
+                Salvar alterações
+              </Button>
+            </div>
+
+          </div>
+        )}
+      </Modal>
 
   </>
   );
