@@ -401,8 +401,9 @@ export const RelMedicao = () => {
                   value={dateFormat(medicaoEdit.dataMedicao || '')} 
                   style={{ 
                     padding: '0.5rem', 
-                    borderRadius: '4px', 
-                    border: '1px solid #D1D5DB', 
+                    borderRadius: '0.375rem',
+                    border: '1px solid #D1D5DB',
+                    height: '1.2rem', 
                     backgroundColor: '#e5e7eb', 
                     cursor: 'not-allowed' }}
                 />
@@ -413,7 +414,11 @@ export const RelMedicao = () => {
                   type="text" 
                   value={medicaoEdit.apontador || ''} 
                   onChange={(e) => handleInputChange('apontador', e.target.value)}
-                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                  style={{ 
+                    padding: '0.5rem', 
+                    height: '1.2rem', 
+                    borderRadius: '0.375rem', 
+                    border: '1px solid #D1D5DB' }}
                 />
               </div>
             </div>
@@ -425,7 +430,7 @@ export const RelMedicao = () => {
                   type="text" 
                   value={medicaoEdit.rodovia || ''} 
                   onChange={(e) => handleInputChange('rodovia', e.target.value)}
-                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                  style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '1.2rem', border: '1px solid #D1D5DB' }}
                 />
               </div>
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
@@ -435,7 +440,7 @@ export const RelMedicao = () => {
                   placeholder="S/N DIR ESQ"
                   value={medicaoEdit.sentido || ''} 
                   onChange={(e) => handleInputChange('sentido', e.target.value)}
-                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                  style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '1.2rem', border: '1px solid #D1D5DB' }}
                 />
               </div>
               
@@ -446,7 +451,7 @@ export const RelMedicao = () => {
                   placeholder="1/2/3 ACOST"
                   value={medicaoEdit.faixa || ''} 
                   onChange={(e) => handleInputChange('faixa', e.target.value)}
-                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                  style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '1.2rem', border: '1px solid #D1D5DB' }}
                 />
               </div>
             </div>
@@ -458,7 +463,7 @@ export const RelMedicao = () => {
                   type="text" 
                   value={medicaoEdit.kmIni || ''} 
                   onChange={(e) => handleInputChange('kmIni', e.target.value)}
-                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                  style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '1.2rem', border: '1px solid #D1D5DB' }}
                 />
               </div>
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
@@ -467,7 +472,7 @@ export const RelMedicao = () => {
                   type="text" 
                   value={medicaoEdit.kmFim || ''} 
                   onChange={(e) => handleInputChange('kmFim', e.target.value)}
-                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                  style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '1.2rem', border: '1px solid #D1D5DB' }}
                 />
               </div>
 
@@ -477,7 +482,7 @@ export const RelMedicao = () => {
                   type="text" 
                   value={medicaoEdit.extensao || ''} 
                   onChange={(e) => handleInputChange('extensao', e.target.value)}
-                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                  style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '1.2rem', border: '1px solid #D1D5DB' }}
                 />
               </div>
             </div>
@@ -489,7 +494,7 @@ export const RelMedicao = () => {
                   type="text" 
                   value={medicaoEdit.largura || ''} 
                   onChange={(e) => handleInputChange('largura', e.target.value)}
-                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                  style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '1.2rem', border: '1px solid #D1D5DB' }}
                 />
               </div>
 
@@ -500,7 +505,7 @@ export const RelMedicao = () => {
                   placeholder="1/2/3 ACOST"
                   value={medicaoEdit.espessura || ''} 
                   onChange={(e) => handleInputChange('espessura', e.target.value)}
-                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                  style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '1.2rem', border: '1px solid #D1D5DB' }}
                 />
               </div>
 
@@ -510,7 +515,7 @@ export const RelMedicao = () => {
                   type="text" 
                   value={medicaoEdit.areaTotal || ''} 
                   onChange={(e) => handleInputChange('areaTotal', e.target.value)}
-                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB' }}
+                  style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '1.2rem', border: '1px solid #D1D5DB' }}
                 />
               </div>
             </div>
@@ -521,7 +526,7 @@ export const RelMedicao = () => {
                   placeholder="Usina/Espessura/Camada"
                   value={medicaoEdit.observacoes || ''} 
                   onChange={(e) => handleInputChange('observacoes', e.target.value)}
-                  style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #D1D5DB', fontFamily: 'inherit' }}
+                  style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '3rem', border: '1px solid #D1D5DB', fontFamily: 'inherit' }}
                 />
             </div>
             {/* BOTÕES DE AÇÃO */}
