@@ -159,16 +159,19 @@ export const RelMedicao = () => {
       key: 'extensao',
       label: 'Extensão',
       align: 'left',
+      render: (row) => `${row.extensao} m`
     },
     {
       key: 'largura',
       label: 'Largura',
       align: 'left',
+      render: (row) => `${row.largura} m`
     },
     {
       key: 'espessura',
       label: 'Espessura',
       align: 'left',
+      render: (row) => `${row.espessura} cm`
     },
     {
       key: 'faixa',
@@ -179,6 +182,7 @@ export const RelMedicao = () => {
       key: 'areaTotal',
       label: 'Área',
       align: 'left',
+      render: (row) => `${row.areaTotal} m²`
     },
     {
       key: 'observacoes',
