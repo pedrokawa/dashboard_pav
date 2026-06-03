@@ -16,6 +16,8 @@ import { Button } from '@mui/material';
 import { type Medicao } from '../types/Medicao';
 import { api } from '../api/api';
 import { dateFormat } from '../utils/dateFormat';
+import { exportToExcel } from '../utils/exportExcel';
+import { ExportButton } from '../components/ExportButton';
 
 export const RelMedicao = () => {
 
@@ -204,6 +206,31 @@ export const RelMedicao = () => {
       )
     },
   ]
+
+  const handleExportExcel = () => {
+    if (medicao.length === 0) {
+      Toast.error("Nenhuma medição disponível para exportar.");
+      return;
+    }
+
+    const dadosPlanilha = medicao.map((item) => ({
+      'Data': dateFormat(item.dataMedicao || '-'),
+      'Apontador': item.apontador || '-',
+      'Rodovia': item.rodovia || '-',
+      'Sentido': item.sentido || '-',
+      'Km Inicial': item.kmIni || '-',
+      'Km Final': item.kmFim || '-',
+      'Extensão': item.extensao || '-',
+      'Largura': item.largura || '-',
+      'Espessura': item.espessura || '-',
+      'Faixa': item.faixa || '-',
+      'Área': item.areaTotal || '-',
+      'Observações': item.observacoes || '-'
+    }));
+
+    exportToExcel(dadosPlanilha, 'Medição_Camada_1');
+
+  }
   // const [termoBusca, setTermoBusca] = useState('');
   // const [dataFiltro, setDataFiltro] = useState('');
 
@@ -304,11 +331,18 @@ export const RelMedicao = () => {
     <div
     style={{ padding: '0.5rem 0.5rem', color: 'var(--texto-escuro)' }}
     > 
-      
-      <h1 style={{ margin: '0 0 1.5rem 0', color: 'var(--texto-escuro)', fontSize: '1.8rem' }}>
-        Medição
-      </h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
 
+        <h1 style={{ margin: '0 0 1.5rem 0', color: 'var(--texto-escuro)', fontSize: '1.8rem' }}>
+          Medição
+        </h1>
+
+        <ExportButton
+        disabled={medicao.length === 0}
+        onClick={handleExportExcel}
+        />
+        
+      </div>
       <div>
         <Tabs tabs={myAbas} />
       </div>
