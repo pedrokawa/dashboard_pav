@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 // import toast from "react-hot-toast";
 import { api } from "../api/api";
 import { DataTable, type ColumnConfig } from "../components/DataTable";
-// import { dateFormat } from '../utils/dateFormat';
+import { dateFormat } from '../utils/dateFormat';
 import { Loading } from "../components/Loading";
 import { ExportButton } from "../components/ExportButton";
 import { exportToExcel } from "../utils/exportExcel";
@@ -299,24 +299,7 @@ export const RelAbasteci = () => {
         key: 'dataAbastecimento', 
         label: 'Data', 
         align: 'left',
-          render: (row) => {
-              // 2. Se a data já vier com barra (fruto dos nossos testes antigos), 
-              // não tenta converter, só mostra ela direto para não quebrar a tela!
-              if (row.dataAbastecimento.includes('/')) {
-                  return row.dataAbastecimento;
-              }
-              // 3. Tenta formatar a data ISO que vem do banco de dados
-              try {
-                  return new Intl.DateTimeFormat('pt-BR', { 
-                      day: '2-digit', 
-                      month: '2-digit', 
-                      year: 'numeric' 
-                  }).format(new Date(row.dataAbastecimento));
-              } catch (error) {
-                  console.error("Erro ao formatar data:", error);
-                  return 'Data Inválida';
-              }
-          }
+          render: (row) => dateFormat(row.dataAbastecimento)
         },
         { 
         key: 'placa', 

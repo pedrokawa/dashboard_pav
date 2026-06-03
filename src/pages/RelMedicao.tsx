@@ -15,6 +15,7 @@ import { Button } from '@mui/material';
 
 import { type Medicao } from '../types/Medicao';
 import { api } from '../api/api';
+import { dateFormat } from '../utils/dateFormat';
 
 export const RelMedicao = () => {
 
@@ -114,21 +115,7 @@ export const RelMedicao = () => {
       key: 'dataMedicao',
       label: 'Data',
       align: 'left',
-      render: (row) => {
-        if (row.dataMedicao.includes('/')) {
-          return row.dataMedicao; // Já está no formato correto
-        }
-        try {
-          return new Intl.DateTimeFormat('pt-BR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-          }).format(new Date(row.dataMedicao));
-        } catch (error) {
-          console.error("Erro ao formatar data:", error);
-          return 'Data Inválida';
-          }
-      }
+      render: (row) => dateFormat(row.dataMedicao)
     },
     {
       key: 'apontador',
@@ -411,8 +398,7 @@ export const RelMedicao = () => {
                 <input 
                   type="text" 
                   readOnly  
-                  value={medicaoEdit.dataMedicao && medicaoEdit.dataMedicao.includes('T') ? 
-                    medicaoEdit.dataMedicao.split('T')[0].split('-').reverse().join('/') : medicaoEdit.dataMedicao || ''} 
+                  value={dateFormat(medicaoEdit.dataMedicao || '')} 
                   style={{ 
                     padding: '0.5rem', 
                     borderRadius: '4px', 
