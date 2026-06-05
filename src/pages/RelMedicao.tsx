@@ -11,12 +11,10 @@ import { Toast } from '../components/Toast'
 import { Button } from '@mui/material';
 // import { SearchBar } from '../components/SearchBar';
 
-// import * as xlsx from 'xlsx';
-
 import { type Medicao } from '../types/Medicao';
 import { api } from '../api/api';
 import { dateFormat } from '../utils/dateFormat';
-import { exportToExcel } from '../utils/exportExcel';
+import { exportMedicao } from '../utils/exportMedicao';
 import { ExportButton } from '../components/ExportButton';
 
 export const RelMedicao = () => {
@@ -207,28 +205,29 @@ export const RelMedicao = () => {
     },
   ]
 
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     if (medicao.length === 0) {
       Toast.error("Nenhuma medição disponível para exportar.");
       return;
     }
 
-    const dadosPlanilha = medicao.map((item) => ({
-      'Data': dateFormat(item.dataMedicao || '-'),
-      'Apontador': item.apontador || '-',
-      'Rodovia': item.rodovia || '-',
-      'Sentido': item.sentido || '-',
-      'Km Inicial': item.kmIni || '-',
-      'Km Final': item.kmFim || '-',
-      'Extensão': item.extensao || '-',
-      'Largura': item.largura || '-',
-      'Espessura': item.espessura || '-',
-      'Faixa': item.faixa || '-',
-      'Área': item.areaTotal || '-',
-      'Observações': item.observacoes || '-'
-    }));
+    const dadosPlanilha = medicao.map((item) => [
+      "",
+      dateFormat(item.dataMedicao || '-'),
+      item.apontador || '-',
+      item.rodovia || '-',
+      item.sentido || '-',
+      item.kmIni || '-',
+      item.kmFim || '-',
+      item.extensao || '-',
+      item.largura || '-',
+      item.espessura || '-',
+      item.faixa || '-',
+      item.areaTotal || '-',
+      item.observacoes || '-'
+    ]);
 
-    exportToExcel(dadosPlanilha, 'Medição_Camada_1');
+    await exportMedicao(dadosPlanilha, 'Medição_Camada_1');
 
   }
   // const [termoBusca, setTermoBusca] = useState('');

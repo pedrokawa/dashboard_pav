@@ -365,6 +365,35 @@ export const RelAbasteci = () => {
       );
     });
 
+    const handleExportExcel = async () => {
+      if (!abastecimentosFiltrados || abastecimentosFiltrados.length === 0) {
+        Toast.dismiss("Nenhum dado para exportar.");
+        return;
+      }
+
+      try {
+
+        const formatData = abastecimentosFiltrados.map((item) => ({
+          'Data': item.dataAbastecimento,
+          'Placa': item.placa,
+          'Veículo': `${item.marca}/${item.modelo}`,
+          'KM': item.km,
+          'Horímetro': item.horimetro || 'N/A',
+          'Operador': item.operador,
+          'Litros': Number(item.litros),
+          'Preço': Number(item.preco),
+          'Total': Number(item.total),
+          'Posto': item.posto,
+        }));
+
+        await exportToExcel(formatData, "Relatório de Abastecimentos");
+      
+      } catch (error) {
+        console.error("Erro ao gerar a planilha de abastecimento:", error);
+        alert("Houve um erro ao exportar o arquivo.");
+      }
+    };
+
 return (
   <>
     <div style={{ width: '100%' }}>
@@ -383,22 +412,7 @@ return (
         
         <ExportButton
         disabled={isLoading}
-        onClick={() => {
-          const formatData = abastecimentos.map((item) => ({
-            'Data': item.dataAbastecimento,
-            'Placa': item.placa,
-            'Veículo': `${item.marca}/${item.modelo}`,
-            'KM': item.km,
-            'Horímetro': item.horimetro || 'N/A',
-            'Operador': item.operador,
-            'Litros': Number(item.litros),
-            'Preço': Number(item.preco),
-            'Total': Number(item.total),
-            'Posto': item.posto,
-          }));
-          exportToExcel(formatData, "Relatório de Abastecimentos");
-
-        }} />
+        onClick={() => handleExportExcel()} />
 
         <AddButton
         disabled={isLoading}
