@@ -22,7 +22,6 @@ export const exportMedicao = async (data: (string | number)[][], fileName: strin
         { width: 20 }  // M (OBSERVAÇÕES)        
     ];
 
-    console.log(data)
 
     let periodo = "-";
     if (data.length > 0) {
@@ -31,11 +30,12 @@ export const exportMedicao = async (data: (string | number)[][], fileName: strin
         const dataFim = data[0][1];
 
         periodo = `${dataIni} a ${dataFim}`;
-        console.log(periodo);
     }
 
+    const local = data.length > 0 ? data[0][3] : '-';
+
     worksheet.addRow(["", "CLIENTE:", ""]);
-    worksheet.addRow(["", "OBRA/LOCAL:", "ASFALTOPAV", "", "", "PERÍODO:", periodo]);
+    worksheet.addRow(["", "OBRA/LOCAL:", local, "", "", "PERÍODO:", periodo]);
     worksheet.addRow(["", "APONTAMENTO DE OBRA - APLICAÇÃO MRAF"]);
     worksheet.addRow([]); // Linha 4 vazia
     worksheet.addRow([
