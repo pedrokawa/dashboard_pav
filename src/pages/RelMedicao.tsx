@@ -16,6 +16,8 @@ import { api } from '../api/api';
 import { dateFormat } from '../utils/dateFormat';
 import { exportMedicao } from '../utils/exportMedicao';
 import { ExportButton } from '../components/ExportButton';
+import { AddButton } from '../components/AddButton';
+import { useAuth } from '../hooks/UseAuth';
 
 export const RelMedicao = () => {
 
@@ -30,6 +32,11 @@ export const RelMedicao = () => {
   //edicao
   const [isEditModal, setIsEditModal] = useState(false);
   const [medicaoEdit, setMedicaoEdit] = useState<Medicao | null>(null);
+
+  //autentica cadastro
+  const { username } = useAuth();
+  const perfisAcesso = ['pedro','paulo'];
+  const hasAccess = username ? perfisAcesso.includes(username) : false;
 
   useEffect(() => {
     const fetchMedicao = async () => {
@@ -230,42 +237,6 @@ export const RelMedicao = () => {
     await exportMedicao(dadosPlanilha, 'Medição_Camada_1');
 
   }
-  // const [termoBusca, setTermoBusca] = useState('');
-  // const [dataFiltro, setDataFiltro] = useState('');
-
-  // const [isModalOpen, setIsModalOpen] = useState(false);
-  // // const [isDragging, setIsDragging] = useState(false);
-  // const [arquivo, setArquivo] = useState<File | null>(null);
-
-  // const importFile = () => {
-  //   if (!arquivo) {
-  //     alert('Nenhum arquivo selecionado!');
-  //     return;
-  //   }
-
-    // const reader = new FileReader();
-
-    // reader.onload = (e) => {
-    //   const arrayBuffer = e.target?.result;
-    //   if (arrayBuffer) {
-    //     const workbook = xlsx.read(arrayBuffer, { type: 'array' });
-    //     const firstSheetName = workbook.SheetNames[0];
-    //     const worksheet = workbook.Sheets[firstSheetName];
-    //     const data = xlsx.utils.sheet_to_json(worksheet);
-    //     console.log('Dados importados:', data);
-    //     alert('Arquivo importado com sucesso! Veja os dados no console.');
-
-    //     setIsModalOpen(false);
-    //   }
-    // }
-
-    // reader.readAsArrayBuffer(arquivo);
-  
-
-  // const closeModal = () => {
-  //   setIsModalOpen(false);
-  //   setArquivo(null);
-  // }
 
   const myAbas: TabItem[] = [
     {
@@ -332,14 +303,22 @@ export const RelMedicao = () => {
     > 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
 
-        <h1 style={{ margin: '0 0 1.5rem 0', color: 'var(--texto-escuro)', fontSize: '1.8rem' }}>
+        <h1 style={{ margin: '0', color: 'var(--texto-escuro)', fontSize: '1.8rem' }}>
           Medição
         </h1>
 
-        <ExportButton
-        disabled={medicao.length === 0}
-        onClick={handleExportExcel}
-        />
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+
+          <ExportButton
+          disabled={medicao.length === 0}
+          onClick={handleExportExcel}
+          />
+          
+          <AddButton 
+          onClick={() => Toast.success("Em construção.")}
+          disabled={!hasAccess}
+          text={!hasAccess ? "Desabilitado" : "Cadastrar"}/>
+        </div>
         
       </div>
       <div>
