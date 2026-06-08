@@ -139,6 +139,23 @@ export const api = {
         return await response.json();
     },
 
+    postMedicao: async (dados: Omit<Medicao, 'id'>): Promise<Medicao> => {
+        const response = await fetch(`${BASE_URL}/api/medicao`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(dados)
+        });
+
+        if(!response.ok){
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || 'Erro ao cadastrar medição.');
+        }
+
+        return await response.json()
+    },
+
     //PUT
     putAbast: async (id: number, dados: Partial<Abastecimento>): Promise<Abastecimento> => {
         const response = await fetch(`${BASE_URL}/api/abastecimento/${id}`,
