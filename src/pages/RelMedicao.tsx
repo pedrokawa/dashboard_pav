@@ -96,7 +96,13 @@ export const RelMedicao = () => {
     if(!medicaoEdit) return;
 
     try {
-      const medicaoAtualizada = await api.putMedicao(medicaoEdit.id, medicaoEdit);
+
+      const dadosAtualizados = {
+        ...medicaoEdit,
+        espessura: parseFloat(String(medicaoEdit.espessura).replace(",",".")) || 0,
+      }
+
+      const medicaoAtualizada = await api.putMedicao(medicaoEdit.id, dadosAtualizados);
       
       setMedicao((prev) => prev.map((item) => item.id === medicaoEdit.id ? medicaoAtualizada : item));
       Toast.success("Medição atualizada com sucesso!");
@@ -165,7 +171,7 @@ export const RelMedicao = () => {
       key: 'espessura',
       label: 'Espessura',
       align: 'left',
-      render: (row) => `${row.espessura} cm`
+      render: (row) => `${row.espessura} m`
     },
     {
       key: 'faixa',
@@ -513,7 +519,7 @@ export const RelMedicao = () => {
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                 <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Espessura</label>
                 <input 
-                  type="text"
+                  type="number"
                   placeholder="1/2/3 ACOST"
                   value={medicaoEdit.espessura || ''} 
                   onChange={(e) => handleInputChange('espessura', e.target.value)}
