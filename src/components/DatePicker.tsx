@@ -28,7 +28,7 @@ export const DatePicker = ({ value, onChange, label, disabled }: DatePickerProps
           color: disabled ? "#6b7280" : (value ? '#111827' : '#9CA3AF'), // Fica cinza se estiver vazio
           backgroundColor: disabled ? '#e5e7eb' : '#fff',
           border: '1px solid #D1D5DB',
-          borderRadius: '0.5rem',
+          borderRadius: '0.375rem',
           outline: 'none',
           fontFamily: 'inherit',
           boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
