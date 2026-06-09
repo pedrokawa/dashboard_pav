@@ -15,6 +15,7 @@ import { DeleteButton } from "../components/DeleteButton";
 import { Toast } from "../components/Toast";
 
 import { type Abastecimento } from "../types/Abastecimento";
+import { DatePicker } from "../components/DatePicker";
 
 
 const uploadImage = async (file: File): Promise<string | undefined> => {
@@ -211,21 +212,14 @@ export const RelAbasteci = () => {
           // 1. Cai aqui se for uma data dos testes antigos: "20/05/2026"
           const partes = abast.dataAbastecimento.split(' ');
           const [dia, mes, ano] = partes[0].split('/');
-          const hora = partes[1] || '00:00'; // Põe meia-noite se não tiver hora
-          
-          dataFinalParaOInput = `${ano}-${mes}-${dia}T${hora}`;
+
+          dataFinalParaOInput = `${ano}-${mes}-${dia}`;
         } else {
           // 2. Cai aqui se for do banco real (ISO): "2026-05-20T14:30:00.000Z"
-          const dataObj = new Date(abast.dataAbastecimento);
-          
-          if (!isNaN(dataObj.getTime())) {
-            // Essa matemática compensa o fuso horário brasileiro para o input não pular 3 horas
-            const tzOffset = dataObj.getTimezoneOffset() * 60000;
-            dataFinalParaOInput = new Date(dataObj.getTime() - tzOffset).toISOString().slice(0, 16);
-          }
-        }
+          dataFinalParaOInput = String(abast.dataAbastecimento).split('T')[0];
 
-      // Entrega pro estado exatamente o que o input quer: YYYY-MM-DDThh:mm
+        }
+      // Entrega pro estado exatamente o que o input quer: YYYY-MM-DD
         setDataAbastecimento(dataFinalParaOInput);
       } else {
         setDataAbastecimento('');
@@ -589,15 +583,10 @@ return (
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-              <label style={{ fontSize: '0.85rem', color: '#374151', fontWeight: 500 }}>Data *</label>
-              <input 
-                type="datetime-local" 
-                placeholder="Data do abastecimento" 
-                required 
-                value={dataAbastecimento}
-                onChange={(e) => setDataAbastecimento(e.target.value)} 
-                style={{ padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #D1D5DB', height: '1.2rem' }}  
-              />
+              <DatePicker
+              label="Data"
+              value={dataAbastecimento}
+              onChange={setDataAbastecimento}/>
             </div>
 
             
@@ -622,7 +611,7 @@ return (
                 <>
                 <input 
                 type="file" 
-                required={!urlNfe && !nfe} 
+                // required={!urlNfe && !nfe} 
                 accept="image/*, .pdf"
                 onChange={(e) => {
                   if (e.target.files && e.target.files.length > 0) {
