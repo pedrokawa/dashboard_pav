@@ -25,14 +25,14 @@ export const DatePicker = ({ value, onChange, label }: DatePickerProps) => {
           fontSize: '0.95rem',
           color: value ? '#111827' : '#9CA3AF', // Fica cinza se estiver vazio
           backgroundColor: '#fff',
-          border: '1px solid #a76e2e',
+          border: '1px solid #D1D5DB',
           borderRadius: '0.5rem',
           outline: 'none',
           fontFamily: 'inherit',
           boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
           cursor: 'pointer',
           minWidth: '150px',
-          height: '100%'
+          height: '1.2rem'
         }}
       />
     </div>
