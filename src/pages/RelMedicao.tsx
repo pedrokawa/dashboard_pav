@@ -19,6 +19,10 @@ import { ExportButton } from '../components/ExportButton';
 import { AddButton } from '../components/AddButton';
 import { useAuth } from '../hooks/UseAuth';
 
+import AddIcon from '@mui/icons-material/Add';
+import { DatePicker } from '../components/DatePicker';
+
+
 export const RelMedicao = () => {
 
   const [medicao, setMedicao] = useState<Medicao[]>([]);
@@ -28,6 +32,10 @@ export const RelMedicao = () => {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [imageGallery, setImageGallery] = useState<string[]>([])
   const [imageAtualIdx, setImageAtualIdx] = useState(0);
+
+  //cadastro
+  const [isCreateModal, setIsCreateModal] = useState(false);
+  const [novaMedicao, setNovaMedicao] = useState<Partial<Medicao>>({});
 
   //edicao
   const [isEditModal, setIsEditModal] = useState(false);
@@ -91,6 +99,64 @@ export const RelMedicao = () => {
     setMedicaoEdit(medicao);
     setIsEditModal(true);
   };
+
+  const handleCreateInputChange = async (field: keyof Medicao, value: string | number) => {
+    const atualizado = { ...novaMedicao,
+      [field]: value
+    };
+
+    const numKmIni = parseFloat(String(atualizado.kmIni || "0").replace(",",".")) || 0;
+    const numKmFim = parseFloat(String(atualizado.kmFim || "0").replace(",",".")) || 0;
+    const numLargura = parseFloat(String(atualizado.largura || "0").replace(",",".")) || 0;
+    
+    if (numKmIni > 0 && numKmFim > 0) {
+      atualizado.extensao = parseFloat(Math.abs(numKmFim - numKmIni).toFixed(2));
+    
+      if (numLargura > 0) {
+        atualizado.areaTotal = parseFloat((atualizado.extensao * numLargura).toFixed(2));
+      } else {
+        atualizado.areaTotal = 0
+      }
+    }
+
+    setNovaMedicao(atualizado);
+ 
+  };
+
+  const handleCreate = async () => {
+    try {
+      const paraNumero = (valor: string | number | undefined) => {
+        if (!valor) return 0;
+
+        return typeof valor === 'number' ? valor : parseFloat(String(valor).replace(",","."))
+      };
+
+      const payloadFormatado = {
+        ...novaMedicao, 
+        kmIni: paraNumero(novaMedicao.kmIni),
+        kmFim: paraNumero(novaMedicao.kmFim),
+        extensao: paraNumero(novaMedicao.extensao),
+        largura: paraNumero(novaMedicao.largura),
+        espessura: paraNumero(novaMedicao.espessura),
+        areaTotal: paraNumero(novaMedicao.areaTotal),
+        foto: novaMedicao.foto || []
+      
+      };
+
+      const medicaoCriada = await api.postMedicao(payloadFormatado as Medicao);
+
+      setMedicao((prev) => [
+        medicaoCriada, ...prev
+      ]);
+
+      Toast.success("Medição cadastrada com sucesso.");
+      setIsCreateModal(false);
+      setNovaMedicao({});
+    } catch(error) {
+      console.error("Erro ao cadastrar medição", error);
+      Toast.error("Erro ao cadastrar medição. Verifique os campos.");
+    }
+  }
 
   const handleEdit = async () => {
     if(!medicaoEdit) return;
@@ -209,9 +275,7 @@ export const RelMedicao = () => {
           <EditButton
           onClick={() => {
             openEditModal(row);
-          }}>
-
-          </EditButton>
+          }}/>
 
         </div>
       )
@@ -321,7 +385,10 @@ export const RelMedicao = () => {
           />
           
           <AddButton 
-          onClick={() => Toast.success("Em construção.")}
+          onClick={() => {
+            setNovaMedicao({});
+            setIsCreateModal(true);
+          }}
           disabled={!hasAccess}
           text={!hasAccess ? "Desabilitado" : "Cadastrar"}/>
         </div>
@@ -412,7 +479,13 @@ export const RelMedicao = () => {
             
           <div style={{ display: 'flex', gap: '1rem' }}>
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Data da Medição</label>
+                <DatePicker 
+                label='Data'
+                value={medicaoEdit.dataMedicao ? String(medicaoEdit.dataMedicao).split('T')[0] : ''}
+                onChange={() => {}}
+                disabled/>
+
+                {/* <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Data da Medição</label>
                 <input 
                   type="text" 
                   readOnly  
@@ -424,7 +497,7 @@ export const RelMedicao = () => {
                     height: '1.2rem', 
                     backgroundColor: '#e5e7eb', 
                     cursor: 'not-allowed' }}
-                />
+                /> */}
               </div>
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                 <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Apontador</label>
@@ -550,8 +623,7 @@ export const RelMedicao = () => {
             {/* BOTÕES DE AÇÃO */}
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '1rem' }}>
               <Button 
-                variant="outlined" 
-                color="inherit" 
+                variant="contained" 
                 style={{ 
                   textTransform: 'none',
                   borderRadius: '0.5rem',
@@ -590,6 +662,175 @@ export const RelMedicao = () => {
         )}
       </Modal>
 
+      {/*Modal de cadastro */}
+      <Modal
+      isOpen={isCreateModal}
+      onClose={() => setIsCreateModal(false)}
+      titulo='Cadastrar Medição'
+      maxWidth='600px'>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <DatePicker 
+              label='Data'
+              value={novaMedicao.dataMedicao ? String(novaMedicao.dataMedicao).split('T')[0] : ''}
+              onChange={(valor) => handleCreateInputChange('dataMedicao', new Date(valor).toISOString())}/>
+              
+            </div>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Apontador</label>
+              <input 
+                type="text" 
+                value={novaMedicao.apontador || ''} 
+                onChange={(e) => handleCreateInputChange('apontador', e.target.value)}
+                style={{ padding: '0.5rem', height: '1.2rem', borderRadius: '0.375rem', border: '1px solid #D1D5DB' }}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Rodovia</label>
+              <input 
+                type="text" 
+                value={novaMedicao.rodovia || ''} 
+                onChange={(e) => handleCreateInputChange('rodovia', e.target.value)}
+                style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '1.2rem', border: '1px solid #D1D5DB' }}
+              />
+            </div>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Sentido</label>
+              <input 
+                type="text" 
+                placeholder="S/N DIR ESQ"
+                value={novaMedicao.sentido || ''} 
+                onChange={(e) => handleCreateInputChange('sentido', e.target.value)}
+                style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '1.2rem', border: '1px solid #D1D5DB' }}
+              />
+            </div>
+            
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Faixa</label>
+              <input 
+                type="text"
+                placeholder="1/2/3 ACOST"
+                value={novaMedicao.faixa || ''} 
+                onChange={(e) => handleCreateInputChange('faixa', e.target.value)}
+                style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '1.2rem', border: '1px solid #D1D5DB' }}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Km Inicial</label>
+              <input 
+                type="text" 
+                value={novaMedicao.kmIni || ''} 
+                onChange={(e) => handleCreateInputChange('kmIni', e.target.value)}
+                style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '1.2rem', border: '1px solid #D1D5DB' }}
+              />
+            </div>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Km Final</label>
+              <input 
+                type="text" 
+                value={novaMedicao.kmFim || ''} 
+                onChange={(e) => handleCreateInputChange('kmFim', e.target.value)}
+                style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '1.2rem', border: '1px solid #D1D5DB' }}
+              />
+            </div>
+
+            {/* EXTENSÃO AUTO-CALCULADA (BLOQUEADA PARA EDIÇÃO) */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Extensão (m)</label>
+              <input 
+                type="text" 
+                readOnly
+                value={novaMedicao.extensao || ''} 
+                style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '1.2rem', border: '1px solid #D1D5DB', backgroundColor: '#e5e7eb', cursor: 'not-allowed' }}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Largura</label>
+              <input 
+                type="text" 
+                value={novaMedicao.largura || ''} 
+                onChange={(e) => handleCreateInputChange('largura', e.target.value)}
+                style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '1.2rem', border: '1px solid #D1D5DB' }}
+              />
+            </div>
+
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Espessura</label>
+              <input 
+                type="text"
+                placeholder="Ex: 0,025"
+                value={novaMedicao.espessura || ''} 
+                onChange={(e) => handleCreateInputChange('espessura', e.target.value)}
+                style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '1.2rem', border: '1px solid #D1D5DB' }}
+              />
+            </div>
+
+            {/* ÁREA TOTAL AUTO-CALCULADA (BLOQUEADA PARA EDIÇÃO) */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Área Total (m²)</label>
+              <input 
+                type="text" 
+                readOnly
+                value={novaMedicao.areaTotal || ''} 
+                style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '1.2rem', border: '1px solid #D1D5DB', backgroundColor: '#e5e7eb', cursor: 'not-allowed' }}
+              />
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+              <label style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151' }}>Observações</label>
+              <textarea 
+                placeholder="Usina/Espessura/Camada"
+                value={novaMedicao.observacoes || ''} 
+                onChange={(e) => handleCreateInputChange('observacoes', e.target.value)}
+                style={{ padding: '0.5rem', borderRadius: '0.375rem', height: '3rem', border: '1px solid #D1D5DB', fontFamily: 'inherit' }}
+              />
+          </div>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.5rem', marginTop: '1rem' }}>
+            <Button 
+              variant="outlined" 
+              color="inherit" 
+              style={{ textTransform: 'none', borderRadius: '0.5rem', fontWeight: 500, backgroundColor: '#e67e22', borderColor: '#E5E7EB', color: '#ffffff', width: '9rem', height: '2.8rem', fontSize: '1rem' }}                
+              onClick={() => {
+                setIsCreateModal(false);
+                Toast.success("Imagens sendo implementadas")}}
+              startIcon={<AddIcon/>}
+            >
+              Imagem  
+            </Button>
+
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+              <Button 
+                variant="contained"
+                color="inherit" 
+                style={{ textTransform: 'none', borderRadius: '0.5rem', fontWeight: 500, backgroundColor: '#e67e22', borderColor: '#E5E7EB', color: '#ffffff', width: '9rem', height: '2.8rem', fontSize: '1rem' }}                
+                onClick={() => setIsCreateModal(false)}
+              >
+                Cancelar
+              </Button>
+              <Button 
+                variant="contained" 
+                style={{ textTransform: 'none', borderRadius: '0.5rem', fontWeight: 500, backgroundColor: '#e67e22', borderColor: '#E5E7EB', color: '#ffffff', width: '9rem', height: '2.8rem', fontSize: '1rem' }} 
+                onClick={handleCreate}
+              >
+                Cadastrar
+              </Button>
+            </div>
+            
+          </div>
+        </div>
+      </Modal>
   </>
   );
 };
