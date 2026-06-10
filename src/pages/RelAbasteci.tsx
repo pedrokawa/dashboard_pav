@@ -368,7 +368,7 @@ export const RelAbasteci = () => {
       try {
 
         const formatData = abastecimentosFiltrados.map((item) => ({
-          'Data': item.dataAbastecimento,
+          'Data': dateFormat(item.dataAbastecimento),
           'Placa': item.placa,
           'Veículo': `${item.marca}/${item.modelo}`,
           'KM': item.km,
